@@ -1,29 +1,49 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using MeuProjetoMvc.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// String de ligação ao PostgreSQL
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// Configurar DbContext com PostgreSQL
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(connectionString));
+
+// Configurar Identity
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+{
+    // Regras de password (ajusta conforme necessário)
+    options.SignIn.RequireConfirmedAccount = false;
+})
+.AddEntityFrameworkStores<ApplicationDbContext>();
+
+// MVC
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Pipeline HTTP
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseRouting();
 
+// IMPORTANTE: ordem correta
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapStaticAssets();
-
+app.UseStaticFiles();
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
+// Identity UI
+app.MapRazorPages();
 
 app.Run();
