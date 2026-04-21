@@ -7,35 +7,28 @@ using Microsoft.AspNetCore.Identity;
 namespace Hermes.Controllers;
 
 [Authorize]
-public class DashboardController : Controller
+public class IncomeController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public DashboardController(UserManager<ApplicationUser> userManager)
+    public IncomeController(UserManager<ApplicationUser> userManager)
     {
         _userManager = userManager;
     }
 
-    public async Task<IActionResult> Index()
+    
+    public async Task<IActionResult> Create()
     {
         var user = await _userManager.GetUserAsync(User);
 
-        var model = new DashboardViewModel
+        var model = new IncomeViewModel
         {
             FullName = user.FullName,
             Email = user.Email,
             Initial = user.FullName?[0].ToString().ToUpper()
         };
 
-        return View(model);
+        return View("~/Views/Dashboard/create-income.cshtml", model);
     }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel 
-        { 
-            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier 
-        });
-    }
 }

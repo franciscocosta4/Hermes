@@ -7,35 +7,28 @@ using Microsoft.AspNetCore.Identity;
 namespace Hermes.Controllers;
 
 [Authorize]
-public class DashboardController : Controller
+public class ExpenseController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public DashboardController(UserManager<ApplicationUser> userManager)
+    public ExpenseController(UserManager<ApplicationUser> userManager)
     {
         _userManager = userManager;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Create()
     {
         var user = await _userManager.GetUserAsync(User);
 
-        var model = new DashboardViewModel
+        var model = new ExpenseViewModel
         {
+            // estes dados são passados pois são precisos para a sidebar
             FullName = user.FullName,
             Email = user.Email,
             Initial = user.FullName?[0].ToString().ToUpper()
         };
 
-        return View(model);
+        return View("~/Views/Dashboard/create-expense.cshtml", model);
     }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel 
-        { 
-            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier 
-        });
-    }
 }
