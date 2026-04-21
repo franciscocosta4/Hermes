@@ -1,6 +1,6 @@
 namespace Hermes.Models
 {
-    public class UserHeaderViewModel
+    public class SidebarViewModel 
     {
         public string FullName { get; set; }
         public string Email { get; set; }

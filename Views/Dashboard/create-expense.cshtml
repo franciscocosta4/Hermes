@@ -1,0 +1,28 @@
+@model Hermes.Models.ExpenseViewModel
+
+@{
+    Layout = "_Layout";
+}
+<div class="main-content" style="max-width:600px;">
+    <div class="card">
+        <h3 style="margin-bottom:1.8rem;">New expense</h3>
+        <form method="post" action="dashboard.html">
+            <div class="form-group"><label>Description</label><input name="description" placeholder="e.g., Rent"
+                                                                         required></div>
+                <div class="form-group"><label>Amount ($)</label><input type="number" step="0.01" name="amount" required>
+                </div>
+                <div class="form-group"><label>Date</label><input type="date" name="date" required></div>
+                <div class="form-group"><label>Category</label><select name="category">
+                    <option>Housing</option>
+                    <option>Food</option>
+                    <option>Transport</option>
+                    <option>Utilities</option>
+                </select></div>
+                <div style="display:flex; gap:16px;">
+                    <button type="submit" class="btn">Save expense</button>
+                    <a asp-controller="Dashboard" asp-action="Index" class="btn-outline">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

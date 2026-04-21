@@ -30,12 +30,12 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxyZWdpc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Utilizador/CODE/Hermes/Views/Dashboard/add-expense.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGFzaGJvYXJkXGFkZC1leHBlbnNlLmNzaHRtbA==
+[C:/Users/Utilizador/CODE/Hermes/Views/Dashboard/create-expense.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGFzaGJvYXJkXGNyZWF0ZS1leHBlbnNlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Utilizador/CODE/Hermes/Views/Dashboard/add-income.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGFzaGJvYXJkXGFkZC1pbmNvbWUuY3NodG1s
+[C:/Users/Utilizador/CODE/Hermes/Views/Dashboard/create-income.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGFzaGJvYXJkXGNyZWF0ZS1pbmNvbWUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Utilizador/CODE/Hermes/Views/Dashboard/index.cshtml]
@@ -56,6 +56,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Utilizador/CODE/Hermes/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Utilizador/CODE/Hermes/Views/Shared/_LayoutLanding.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXRMYW5kaW5nLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Utilizador/CODE/Hermes/Views/Shared/_ValidationScriptsPartial.cshtml]
