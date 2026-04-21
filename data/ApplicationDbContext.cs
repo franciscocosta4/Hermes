@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace MeuProjetoMvc.Data
 {
     // Herdamos de IdentityDbContext para incluir tabelas de autenticação
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         // Construtor recebe opções configuradas no Program.cs
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -12,7 +12,7 @@ namespace MeuProjetoMvc.Data
         {
         }
 
-        // Aqui podemos adicionar outras tabelas da tua app
+        // Aqui podemos adicionar outras tabelas da app
         // public DbSet<Produto> Produtos { get; set; }
     }
 }

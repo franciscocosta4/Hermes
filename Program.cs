@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using MeuProjetoMvc.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+// MVC
+builder.Services.AddControllersWithViews();
 
 // String de ligação ao PostgreSQL
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -12,15 +14,21 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 // Configurar Identity
-builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
-    // Regras de password (ajusta conforme necessário)
+    options.Password.RequiredLength = 6;
     options.SignIn.RequireConfirmedAccount = false;
 })
-.AddEntityFrameworkStores<ApplicationDbContext>();
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
 
-// MVC
-builder.Services.AddControllersWithViews();
+
+// Cookies (configuração login)
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
+});
 
 var app = builder.Build();
 
@@ -32,18 +40,15 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRouting();
 
 // IMPORTANTE: ordem correta
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseStaticFiles();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-// Identity UI
-app.MapRazorPages();
 
 app.Run();

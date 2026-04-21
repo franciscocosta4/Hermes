@@ -1,8 +1,133 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@using Microsoft.AspNetCore.Identity
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hermes · personal finance, minimal</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body class="landing">
+
+<div class="app-wrapper">
+    <div class="container">
+
+        <!-- HEADER -->
+        <header class="flex-between" style="padding: 24px 0;">
+            <div style="font-weight: 600; font-size: 1.8rem; letter-spacing: -0.03em;">
+                Hermes
+            </div>
+
+            <div style="display: flex; gap: 16px; align-items: center;">
+
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <!-- UTILIZADOR AUTENTICADO -->
+                    <a asp-controller="Dashboard" asp-action="Index" class="btn-outline btn-sm">
+                        Dashboard
+                    </a>
+
+                    <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-sm">
+                            Logout
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <!-- UTILIZADOR NÃO AUTENTICADO -->
+                    <a asp-controller="Account" asp-action="Login" class="btn-outline btn-sm">
+                        Sign in
+                    </a>
+                    <a asp-controller="Account" asp-action="Register" class="btn btn-sm">
+                        Get started
+                    </a>
+                }
+
+            </div>
+        </header>
+
+        <!-- HERO -->
+        <div class="hero">
+            <div style="max-width: 680px;">
+
+                <h1 style="margin-bottom: 1.2rem;">
+                    Personal finances,<br>zero noise.
+                </h1>
+
+                <p style="font-size: 1.2rem; color: #3a3a3a; margin-bottom: 2.2rem;">
+                    Track income, expenses, and overspending — clean, direct, black & white.
+                </p>
+
+                @if (User.Identity == null || !User.Identity.IsAuthenticated)
+                {
+                    <!-- BOTÕES SÓ PARA GUEST -->
+                    <div style="display: flex; gap: 16px;">
+                        <a asp-controller="Account" asp-action="Register"
+                           class="btn"
+                           style="padding: 14px 32px;">
+                            Open account →
+                        </a>
+
+                        <a asp-controller="Account" asp-action="Login"
+                           class="btn-outline"
+                           style="padding: 14px 32px;">
+                            Login
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <!-- UTILIZADOR LOGADO -->
+                    <div style="display: flex; gap: 16px;">
+                        <a asp-controller="Dashboard" asp-action="Index"
+                           class="btn"
+                           style="padding: 14px 32px;">
+                            Go to dashboard →
+                        </a>
+                    </div>
+                }
+
+            </div>
+        </div>
+
+        <!-- FEATURES -->
+        <div class="grid-4" style="margin: 3rem 0 5rem;">
+            <div class="card">
+                <i class="fas fa-chart-line" style="font-size:1.8rem; margin-bottom:1rem; opacity:0.8;"></i>
+                <h3>30-day balance</h3>
+                <p class="text-muted">Income vs expenses at a glance.</p>
+            </div>
+
+            <div class="card">
+                <i class="fas fa-chart-bar" style="font-size:1.8rem; margin-bottom:1rem; opacity:0.8;"></i>
+                <h3>90-day average</h3>
+                <p class="text-muted">Smart baseline to detect overspending.</p>
+            </div>
+
+            <div class="card">
+                <i class="fas fa-tags" style="font-size:1.8rem; margin-bottom:1rem; opacity:0.8;"></i>
+                <h3>Categories</h3>
+                <p class="text-muted">Organise every transaction.</p>
+            </div>
+
+            <div class="card">
+                <i class="fas fa-file-export" style="font-size:1.8rem; margin-bottom:1rem; opacity:0.8;"></i>
+                <h3>Export CSV</h3>
+                <p class="text-muted">Download your history.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <footer style="border-top:1px solid #ececec; padding:2rem 0; text-align:center; color:#6f6f6f;">
+        Hermes · clarity over clutter
+    </footer>
 </div>
+
+</body>
