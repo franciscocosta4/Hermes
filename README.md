@@ -1,8 +1,9 @@
 # Hermes
 
 Hermes is a personal finances manager for the web made in .net. It allows users to track incomes and expenses, categorize them, and get insights about spending behavior. The primary goal is to help users monitor if they are overspending and provide summary and forecast reports based on historical data.
+<img width="1902" height="887" alt="image" src="https://github.com/user-attachments/assets/8f19b5ea-7648-4fe3-8d24-b8d3355e85ce" />
+<img width="1901" height="885" alt="image" src="https://github.com/user-attachments/assets/4068ad99-5a76-4166-a0ec-51e9ba34eb5a" />
 
-## Stack
 ![.Net](https://img.shields.io/badge/.NET-5C2D91?style=for-the-badge&logo=.net&logoColor=white) ![C#](https://img.shields.io/badge/c%23-%23239120.svg?style=for-the-badge&logo=csharp&logoColor=white)    ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)  ![CSS](https://img.shields.io/badge/css-%23663399.svg?style=for-the-badge&logo=css&logoColor=white) 
 
 ---
