@@ -55,8 +55,7 @@ public class IncomeController : Controller
         var user = await _userManager.GetUserAsync(User);
 
         //criamos um income que usa o model "Income" pois o "CreateIncomeViewModel" não pode ter acesso 
-        //aos dados do user 
-        
+        //aos dados do user e nos precisamos de registar o user assossiado ao income
         var income = new Income
         {
             Amount = model.Amount,

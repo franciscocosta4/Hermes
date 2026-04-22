@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Hermes.Models
 {
+    // este ViewModel serve para controlar o que sai da camada de dados, evita expor a entidade Income diretamente
     public class IncomeViewModel 
     {
         public string FullName { get; set; }
