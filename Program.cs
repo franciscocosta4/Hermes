@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MeuProjetoMvc.Data;
+using Hermes.Data;
+using Hermes.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 // MVC

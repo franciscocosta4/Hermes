@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+namespace Hermes.Controllers;
+using Hermes.Models;
 
 /// <summary>
 /// Controlador responsável pela gestão da autenticação e autorização de utilizadores.
