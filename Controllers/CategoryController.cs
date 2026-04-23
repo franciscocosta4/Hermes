@@ -7,7 +7,7 @@ using Hermes.Data;
 namespace Hermes.Controllers;
 
 [Authorize]
-public class ExpenseController : Controller
+public class CategoryController : Controller
 {
     /// <summary>
     /// Campo privado que armazena a instância do contexto da base de dados.
@@ -22,7 +22,7 @@ public class ExpenseController : Controller
     /// O ASP.NET Core fornece automaticamente a instância do contexto.
     /// </summary>
     /// <param name="context">Instância do contexto da base de dados</param>
-    public ExpenseController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+    public CategoryController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
     {
         _context = context;
         _userManager = userManager;
@@ -32,7 +32,7 @@ public class ExpenseController : Controller
     {
         var user = await _userManager.GetUserAsync(User);
 
-        var model = new ExpenseViewModel
+        var model = new CategoryViewModel
         {
             // estes dados são passados pois são precisos para a sidebar
             FullName = user.FullName,
@@ -40,11 +40,11 @@ public class ExpenseController : Controller
             Initial = user.FullName?[0].ToString().ToUpper()
         };
 
-        return View("~/Views/Dashboard/create-expense.cshtml", model);
+        return View("~/Views/Dashboard/create-category.cshtml", model);
     }
     
     [HttpPost]
-    public async Task<IActionResult> Create(CreateExpenseViewModel model)
+    public async Task<IActionResult> Create(CreateCategoryViewModel model)
     {
         // verificamos se os dados do input do CreateExpenseViewModel são válidos
         if (!ModelState.IsValid)
@@ -53,16 +53,15 @@ public class ExpenseController : Controller
         // pega no user autenticado
         var user = await _userManager.GetUserAsync(User);
 
-        //criamos uma expense que usa o model "Expense" pois o "CreateExpenseViewModel" não pode ter acesso 
-        //aos dados do user e nos precisamos de registar o user assossiado a expense
-        var expense = new Expense
+        //ao usar o model "Category" garantimos que o userId ainda pode ser registado mesmo tendo: CreateCategoryViewModel model 
+        // para que o user não consiga fazer um registo com outro id, por exemplo .
+        var category = new Category
         {
-            Amount = model.Amount,
-            Date = model.Date,
+            Name = model.Name,
             UserId = user.Id
         };
 
-        _context.Expenses.Add(expense);
+        _context.Categories.Add(category);
         await _context.SaveChangesAsync();
 
         return RedirectToAction("Index", "Dashboard");
