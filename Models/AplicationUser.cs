@@ -12,5 +12,10 @@ namespace Hermes.Models
         // Relação inversa (1 user → muitos incomes)
         public ICollection<Income> Incomes { get; set; }
 
+        // Relação inversa (1 user → muitas categories)
+        public ICollection<Category> Categories { get; set; }
+
+         // Relação inversa (1 user → muitas expenses)
+        public ICollection<Expense> Expenses { get; set; }  
     }
 }
