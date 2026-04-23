@@ -14,6 +14,8 @@ public class CreateExpenseViewModel
 
     [Required]
     public DateOnly Date { get; set; }
+
+    // aqui vai o id da categoria escolhida pelo user:  <option value="@category.Id"> 
     [Required]
-    public Category Category { get; set; }
+    public int CategoryId { get; set; }
 }
