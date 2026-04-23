@@ -42,7 +42,7 @@ public class IncomeController : Controller
             Date = DateOnly.FromDateTime(DateTime.Today)
         };
 
-        return View("~/Views/Dashboard/create-income.cshtml", model);
+        return View("create", model);
     }
     [HttpPost]
     public async Task<IActionResult> Create(CreateIncomeViewModel model)
