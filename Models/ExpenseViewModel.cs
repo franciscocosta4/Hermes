@@ -17,7 +17,10 @@ namespace Hermes.Models
 
         [Required]
         public DateOnly Date { get; set; }
-        [Required]
-        public Category Category { get; set; }
+
+        // como estamos a usar viewbag não precisamos de:
+        
+        // public int CategoryId { get; set; }  // valor do select
+        // public List<Category> Categories { get; set; }
     }
 }

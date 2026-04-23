@@ -32,12 +32,23 @@ public class ExpenseController : Controller
     {
         var user = await _userManager.GetUserAsync(User);
 
+        // não precisa de ser assincrona pois nao vai a bd, apenas pega no id do User
+        var userid = _userManager.GetUserId(User);
+        // aqui percorre as categorias e guarda as relacionadas ao user logado
+        var categories = _context.Categories.Where(c => c.UserId == userid).ToList();
+
+        // Neste caso usamos ViewBag por ser mais simples de preencher e enviar dados para a view,
+        // especialmente para listas pequenas num dropdown.
+        // Evita termos de passar mais 2 parametros na ExpenseViewModel
+        ViewBag.Categories = categories;
+
         var model = new ExpenseViewModel
         {
-            // estes dados são passados pois são precisos para a sidebar
+            // estes dados são passados pois são precisos para a sidebar e formatação da data
             FullName = user.FullName,
             Email = user.Email,
-            Initial = user.FullName?[0].ToString().ToUpper()
+            Initial = user.FullName?[0].ToString().ToUpper(), 
+            Date = DateOnly.FromDateTime(DateTime.Today)
         };
 
         return View("~/Views/Dashboard/create-expense.cshtml", model);
@@ -48,18 +59,21 @@ public class ExpenseController : Controller
     {
         // verificamos se os dados do input do CreateExpenseViewModel são válidos
         if (!ModelState.IsValid)
-            return View(model);
+            return View(model); //! neste momento nao funciona pois vai para /create sendo que tem se ser /create-expense
 
         // pega no user autenticado
-        var user = await _userManager.GetUserAsync(User);
+        // usamos await porque a query pode demorar um pouco 
+        var user = await _userManager.GetUserAsync(User); // retorna: Task<User> 
 
-        //criamos uma expense que usa o model "Expense" pois o "CreateExpenseViewModel" não pode ter acesso 
-        //aos dados do user e nos precisamos de registar o user assossiado a expense
+        // Criamos uma Expense porque é a entidade que representa a tabela na base de dados.
+        // O CreateExpenseViewModel só serve para receber dados da view e não contém informação de domínio (como UserId).
         var expense = new Expense
         {
             Amount = model.Amount,
+            Description = model.Description,
             Date = model.Date,
-            UserId = user.Id
+            UserId = user.Id,
+            CategoryId = model.CategoryId // aqui tá o id que vem da view, passa pelo CreateExpenseViewModel e chega aqui
         };
 
         _context.Expenses.Add(expense);
