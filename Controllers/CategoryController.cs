@@ -40,7 +40,7 @@ public class CategoryController : Controller
             Initial = user.FullName?[0].ToString().ToUpper()
         };
 
-        return View("~/Views/Dashboard/create-category.cshtml", model);
+        return View("create", model);
     }
     
     [HttpPost]

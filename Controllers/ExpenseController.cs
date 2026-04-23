@@ -51,7 +51,7 @@ public class ExpenseController : Controller
             Date = DateOnly.FromDateTime(DateTime.Today)
         };
 
-        return View("~/Views/Dashboard/create-expense.cshtml", model);
+        return View("create", model);
     }
     
     [HttpPost]
