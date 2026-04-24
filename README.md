@@ -29,7 +29,7 @@ Hermes is a personal finances manager for the web made in .net. It allows users 
 ---
 
 ## Database Design
-<img width="1133" height="1005" alt="image" src="https://github.com/user-attachments/assets/6e313ac8-e4c0-421b-931d-905f1a28e4db" />
+<img width="983" height="547" alt="image" src="https://github.com/user-attachments/assets/326ad21c-487c-4062-b754-8dced556562b" />
 
 ### budget
 Defines monthly spending limits per user.
@@ -45,18 +45,6 @@ Represents financial goals set by the user (e.g. saving for a car, vacation, etc
 - `current_amount` → progress made so far
 - `deadline` → optional target completion date
 - Helps users track long-term savings objectives
-
-### financial_snapshot
-Stores aggregated financial data for a given period.
-
-- Used for analytics and reporting (e.g. last 30/90 days)
-- Includes:
-  - total income
-  - total expenses
-  - balance
-  - average daily expenses
-
-- Improves performance by avoiding repeated heavy calculations
 
 ### alert
 Stores system-generated notifications for users.
