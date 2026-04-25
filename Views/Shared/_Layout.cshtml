@@ -5,70 +5,135 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard · Hermes</title>
+
+    <!-- Google Fonts (já optimizado) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap"
-          rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="~/css/style.css">
+
+    <link rel="preload"
+          as="style"
+          href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap"
+          onload="this.rel='stylesheet'">
+
+    <noscript>
+        <link rel="stylesheet"
+              href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap">
+    </noscript>
+
+    <!-- Font Awesome (NÃO bloqueante) -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+          media="print"
+          onload="this.media='all'">
+
+    <noscript>
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    </noscript>
+
+    <!-- Preload das fontes críticas do Font Awesome -->
+    <link rel="preload"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/webfonts/fa-solid-900.woff2"
+          as="font"
+          type="font/woff2"
+          crossorigin>
+
+    <link rel="preload"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/webfonts/fa-regular-400.woff2"
+          as="font"
+          type="font/woff2"
+          crossorigin>
+
+    <!-- CSS local (não bloqueante) -->
+    <link rel="preload"
+          as="style"
+          href="~/css/style.css"
+          onload="this.rel='stylesheet'">
+
+    <noscript>
+        <link rel="stylesheet" href="~/css/style.css">
+    </noscript>
+
 </head>
 
 <body>
     <div class="app-grid">
+
         <!-- SIDEBAR -->
         <div class="sidebar">
+
             <div style="font-weight: 600; font-size: 1.6rem; letter-spacing: -0.03em; margin-bottom: 2.5rem; padding-left: 8px;">
                 Hermes
             </div>
+
             <nav>
                 <a asp-controller="Dashboard" asp-action="Index" class="nav-item active">
                     <i class="fas fa-home"></i> Dashboard
                 </a>
+
                 <a asp-controller="Transaction" asp-action="Index" class="nav-item">
                     <i class="fas fa-list-ul"></i> Transactions
                 </a>
+
                 <a asp-controller="Category" asp-action="Create" class="nav-item">
-                    <i class="fas fa-circle"></i> Add expense category
+                    <i class="fas fa-book"></i> Add expense category
                 </a>
+
                 <a asp-controller="Expense" asp-action="Create" class="nav-item">
                     <i class="fas fa-minus-circle"></i> Add expense
                 </a>
+
                 <a asp-controller="Income" asp-action="Create" class="nav-item">
                     <i class="fas fa-plus-circle"></i> Add income
                 </a>
+
                 <a href="#" class="nav-item" onclick="return false;">
-                    <i class="fas fa-chart-pie"></i> Reports
+                    <i class="fas fa-chart-pie"></i> Monthly budget
                 </a>
+
+                <a asp-controller="Income" asp-action="Create" class="nav-item">
+                    <i class="fas fa-money-bill"></i> Savings goal
+                </a>
+
                 <a href="#" class="nav-item" onclick="return false;">
                     <i class="fas fa-cog"></i> Settings
                 </a>
             </nav>
-            <div style="margin-top: 70%; border-top: 1px solid #ddd; padding-top: 1.5rem;">
+
+            <div style="margin-top: 55%; border-top: 1px solid #ddd; padding-top: 1.5rem;">
+
                 <div style="display:flex; align-items:center; gap:10px;">
+
                     <div style="width:32px; height:32px; background:#0b0b0b; border-radius:40px; display:flex; align-items:center; justify-content:center; color:white;">
                         @(Model?.FullName?[0].ToString().ToUpper() ?? "U")
                     </div>
+
                     <div>
                         <strong>@(Model?.FullName ?? "User")</strong><br>
                         <span class="text-muted" style="font-size:0.8rem;">@Model?.Email</span>
                     </div>
+
+                    <form asp-controller="Account" asp-action="Logout" method="post">
+                        <button type="submit" class="btn btn-sm">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                        </button>
+                    </form>
+
                 </div>
-                <form asp-controller="Account" asp-action="Logout" method="post">
-                    <button type="submit" class="btn-outline btn-sm">Logout</button>
-                </form>
+
             </div>
+
         </div>
 
-        <!-- MAIN CONTENT (ÁREA PRINCIPAL) -->
+        <!-- MAIN CONTENT -->
         <main class="main-content">
             @RenderBody()
         </main>
 
     </div>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
+
 </html>
