@@ -1,118 +1,92 @@
-                      @model Hermes.Models.DashboardViewModel // vai ser preciso para carregar conteudo dinamico na dashboard vindo do viewmodel
-                      <div class="main-content">
-                        <div class="flex-between mb-2">
-                            <h2>Overview</h2>
-                            <div>
-                                <a href="add-expense.html" class="btn-outline btn-sm"><i class="fas fa-plus"></i> New</a>
-                                <a href="#" class="btn-outline btn-sm" style="margin-left:8px;"><i class="fas fa-download"></i>
-                                    CSV</a>
-                                </div>
+@model Hermes.Models.DashboardViewModel // vai ser preciso para carregar conteudo dinamico na dashboard vindo do
+viewmodel
+<div class="main-content">
+    <div class="flex-between mb-2">
+        <h2>Overview</h2>
+        <div>
+            <a href="add-expense.html" class="btn-outline btn-sm"><i class="fas fa-plus"></i> New</a>
+            <a href="#" class="btn-outline btn-sm" style="margin-left:8px;"><i class="fas fa-download"></i>
+                CSV</a>
+            </div>
+        </div>
+
+        <div class="grid-4">
+            <div class="card">
+                <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">Balance (30d)</div>
+                <div class="text-large">$@Model?.MonthBalance</div>
+                <span style="color:#0b0b0b;">↑ 12% vs last month</span>
+            </div>
+            <div class="card">
+                <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">Income (30d)</div>
+                <div class="text-large">$@Model?.MonthIncomeSum</div>
+                <span class="text-muted">+ $1,200 sponsorship</span>
+            </div>
+            <div class="card">
+                <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">Expenses (30d)</div>
+                <div class="text-large">$@Model?.MonthExpenseSum</div>
+                <span class="text-muted">vs avg $3,880</span>
+            </div>
+            <div class="card" style="border-left: 4px solid #0b0b0b;">
+                <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">90d avg expense</div>
+                <div class="text-large">$@Model?.Sum90DaysExpenses</div>
+                <span class="badge badge-light" style="margin-top:8px;">overspending alert</span>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 24px; background: #f9f9f9;">
+            <div class="flex-between">
+                <div><i class="fas fa-exclamation-triangle" style="margin-right: 10px;"></i> <strong>Overspending
+                    detected</strong> — Last 30 days: $4,170 vs 90d avg $3,880 (+7.5%)</div>
+                    <span class="badge">review</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 2.5rem;">
+                <div class="flex-between">
+                    <h3>Recent transactions <br /> <small>(30 days)</small></h3>
+                    <a href="transactions.html" style="color:#0b0b0b; font-weight:500;">View all →</a>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Type</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.MonthTransactions)
+                            {
+                                <tr>
+                                    <td>@item.Amount$</td>
+                                    <td>@item.Date</td>
+                                    <td>@item.Category</td>
+                                    <td>@item.Type</td>
+                                    <td><a href="#"><i class="far fa-edit action-icon"></i></a><a href="#"><i
+                                    class="far fa-trash-alt action-icon"></i></a></td>
+                                </tr>
+                            }
+                                    </tbody>
+                                </table>
                             </div>
-
-                            <div class="grid-4">
-                                <div class="card">
-                                    <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">Balance (30d)</div>
-                                    <div class="text-large">$@Model?.MonthIncomeSum</div>
-                                    <span style="color:#0b0b0b;">↑ 12% vs last month</span>
+                        </div>
+                        @* <div style="margin-top: 2rem; display: flex; gap: 24px;">
+                            <div
+                                style="flex:1; height: 80px; background: #f4f4f4; border-radius: 18px; display: flex; align-items: flex-end; padding: 10px;">
+                                <div style="width: 12%; background:#0b0b0b; height: 60%; margin-right: 4px; border-radius: 40px;">
                                 </div>
-                                <div class="card">
-                                    <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">Income (30d)</div>
-                                    <div class="text-large">$@Model?.MonthIncomeSum</div>
-                                    <span class="text-muted">+ $1,200 sponsorship</span>
+                                <div style="width: 12%; background:#0b0b0b; height: 80%; margin-right: 4px; border-radius: 40px;">
                                 </div>
-                                <div class="card">
-                                    <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">Expenses (30d)</div>
-                                    <div class="text-large">$@Model?.MonthExpenseSum</div>
-                                    <span class="text-muted">vs avg $3,880</span>
+                                <div style="width: 12%; background:#0b0b0b; height: 45%; margin-right: 4px; border-radius: 40px;">
                                 </div>
-                                <div class="card" style="border-left: 4px solid #0b0b0b;">
-                                    <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">90d avg expense</div>
-                                    <div class="text-large">$@Model?.Sum90DaysExpenses</div>
-                                    <span class="badge badge-light" style="margin-top:8px;">overspending alert</span>
+                                <div style="width: 12%; background:#0b0b0b; height: 90%; margin-right: 4px; border-radius: 40px;">
                                 </div>
+                                <div style="width: 12%; background:#0b0b0b; height: 70%; border-radius: 40px;"></div>
+                                <span class="text-muted" style="margin-left: 12px;">Last 5 months</span>
                             </div>
-
-                            <div class="card" style="margin-top: 24px; background: #f9f9f9;">
-                                <div class="flex-between">
-                                    <div><i class="fas fa-exclamation-triangle" style="margin-right: 10px;"></i> <strong>Overspending
-                                        detected</strong> — Last 30 days: $4,170 vs 90d avg $3,880 (+7.5%)</div>
-                                        <span class="badge">review</span>
-                                    </div>
-                                </div>
-
-                                <div style="margin-top: 2.5rem;">
-                                    <div class="flex-between">
-                                        <h3>Recent transactions</h3>
-                                        <a href="transactions.html" style="color:#0b0b0b; font-weight:500;">View all →</a>
-                                    </div>
-                                    <div class="table-wrapper">
-                                        <table>
-                                            <thead>
-                                                <tr>
-                                                    <th>Amount</th>
-                                                    <th>Date</th>
-                                                    <th>Category</th>
-                                                    <th>Type</th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td class="type-expense">- $1,000</td>
-                                                    <td>01/02/2022</td>
-                                                    <td>Rent</td>
-                                                    <td>Expense</td>
-                                                    <td><a href="#"><i class="far fa-edit action-icon"></i></a><a href="#"><i
-                                                        class="far fa-trash-alt action-icon"></i></a></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="type-expense">- $300</td>
-                                                        <td>03/01/2022</td>
-                                                        <td>Food</td>
-                                                        <td>Expense</td>
-                                                        <td><a href="#"><i class="far fa-edit action-icon"></i></a><a href="#"><i
-                                                            class="far fa-trash-alt action-icon"></i></a></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="type-income">+ $1,000</td>
-                                                            <td>29/11/2021</td>
-                                                            <td>-</td>
-                                                            <td>Income</td>
-                                                            <td><a href="#"><i class="far fa-edit action-icon"></i></a></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="type-income">+ $300</td>
-                                                            <td>16/10/2021</td>
-                                                            <td>-</td>
-                                                            <td>Income</td>
-                                                            <td><a href="#"><i class="far fa-edit action-icon"></i></a></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="type-expense">- $3,500</td>
-                                                            <td>02/09/2021</td>
-                                                            <td>Travel</td>
-                                                            <td>Expense</td>
-                                                            <td><a href="#"><i class="far fa-edit action-icon"></i></a><a href="#"><i
-                                                                class="far fa-trash-alt action-icon"></i></a></td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                            <div style="margin-top: 2rem; display: flex; gap: 24px;">
-                                                <div
-                                                    style="flex:1; height: 80px; background: #f4f4f4; border-radius: 18px; display: flex; align-items: flex-end; padding: 10px;">
-                                                    <div style="width: 12%; background:#0b0b0b; height: 60%; margin-right: 4px; border-radius: 40px;">
-                                                    </div>
-                                                    <div style="width: 12%; background:#0b0b0b; height: 80%; margin-right: 4px; border-radius: 40px;">
-                                                    </div>
-                                                    <div style="width: 12%; background:#0b0b0b; height: 45%; margin-right: 4px; border-radius: 40px;">
-                                                    </div>
-                                                    <div style="width: 12%; background:#0b0b0b; height: 90%; margin-right: 4px; border-radius: 40px;">
-                                                    </div>
-                                                    <div style="width: 12%; background:#0b0b0b; height: 70%; border-radius: 40px;"></div>
-                                                    <span class="text-muted" style="margin-left: 12px;">Last 5 months</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                        </div> *@
+                    </div>
+                </div>
