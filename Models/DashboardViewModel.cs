@@ -8,5 +8,9 @@ namespace Hermes.Models
         public string Initial { get; set; }
         //aqui é definido o content da dashboard tipo :
         // public Float balance { get; set; }
+
+        public decimal MonthIncomeSum {get; set;}
+        public decimal MonthExpenseSum {get; set;}
+        public decimal Sum90DaysExpenses {get; set;}
     }
 }
