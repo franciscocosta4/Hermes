@@ -33,38 +33,42 @@ public class DashboardController : Controller
         var user = await _userManager.GetUserAsync(User);
         // não precisa de ser assincrona pois nao vai a bd, apenas pega no id do User
         var userid = _userManager.GetUserId(User);
-        // Data limite em DateOnly
+        // Datas limite (30 e 90 dias)
         var last30Days = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
         var last90Days = DateOnly.FromDateTime(DateTime.Now.AddDays(-90));
 
-        // aqui percorre os incomes e guarda as relacionadas ao user logado e registado nos últimos 30 dias
-        var Monthincomes = _context.Incomes
-            .Where(c => c.UserId == userid && c.Date >= last30Days)
-            .ToList();
+        // percorre os incomes e guarda as relacionadas ao user logado e registado nos últimos 30 dias
+        decimal MonthIncomeSum = _context.Incomes.Where(e => e.UserId == userid && e.Date >= last30Days).Sum(e => e.Amount);
 
-        decimal MonthIncomeSum = 0;
-        foreach (Income income in Monthincomes)
-        {
-            var quantidade = income.Amount;
-            MonthIncomeSum += income.Amount;
-        }
+        // percorre as despesas e guarda as relacionadas ao user logado e registado nos últimos 30 dias
+        decimal MonthExpenseSum = _context.Expenses.Where(e => e.UserId == userid && e.Date >= last30Days).Sum(e => e.Amount);
 
-        // aqui percorre as despesas e guarda as relacionadas ao user logado e registado nos últimos 30 dias
-        var MonthExpenses = _context.Expenses.Where(e => e.UserId == userid && e.Date >= last30Days).ToList();
-        decimal MonthExpenseSum = 0; 
-        foreach(Expense expense in MonthExpenses)
-        {
-            var quantidade = expense.Amount;
-            MonthExpenseSum += expense.Amount;
-        }
+        // percorre as despesas e guarda as relacionadas ao user logado e registado nos últimos 90 dias
+        decimal Sum90DaysExpenses = _context.Expenses.Where(e => e.UserId == userid && e.Date >= last90Days).Sum(e => e.Amount);
 
-        var List90DaysExpenses = _context.Expenses.Where(e => e.UserId == userid && e.Date >= last90Days).ToList();
-        decimal Sum90DaysExpenses = 0; 
-        foreach(Expense expense in List90DaysExpenses)
-        {
-            var quantidade = expense.Amount;
-            Sum90DaysExpenses += expense.Amount;
-        }
+        decimal MonthBalance = MonthIncomeSum - MonthExpenseSum;
+        
+        // pega nos incomes do ultimo mes e manda para DashboardTransactionViewModel
+        var MonthIncomes = _context.Incomes.Where(c => c.UserId == userid && c.Date >= last30Days)
+            .Select(i => new DashboardTransactionViewModel
+            {
+                Amount = i.Amount,
+                Date = i.Date,
+                Type = "Income",
+                Category = "-"
+            });
+         // pega nas despesas do ultimo mes e manda para DashboardTransactionViewModel
+        var MonthExpenses = _context.Expenses
+            .Where(e => e.UserId == userid && e.Date >= last30Days)
+            .Select(e => new DashboardTransactionViewModel
+            {
+                Amount = e.Amount,
+                Date = e.Date,
+                Type = "Expense",
+                Category = e.Category.Name
+            });
+        // junta os incomes e as despesas do mes em uma lista
+        var MonthTransactions = MonthIncomes.Union(MonthExpenses).OrderBy(t => t.Date).ToList();
 
         var model = new DashboardViewModel
         {
@@ -73,7 +77,9 @@ public class DashboardController : Controller
             Initial = user.FullName?[0].ToString().ToUpper(),
             MonthIncomeSum = MonthIncomeSum,
             MonthExpenseSum = MonthExpenseSum,
+            MonthBalance = MonthBalance,
             Sum90DaysExpenses = Sum90DaysExpenses,
+            MonthTransactions = MonthTransactions
         };
 
         return View(model);

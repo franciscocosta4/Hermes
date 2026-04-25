@@ -4,8 +4,9 @@ using System.ComponentModel.DataAnnotations;
 // e ia acabar por falhar no post : [{"Field":"Email","Errors":["The Email field is required."]},{"Field":"Initial","Errors":["The Initial field is required."]},{"Field":"FullName","Errors":["The FullName field is required."]}]
 public class CreateIncomeViewModel
 {
-    [Required]
-    [Range(0.01, double.MaxValue)]
+
+    [Required(ErrorMessage = "O valor é obrigatório")]
+    [Range(0.01, 999999999, ErrorMessage = "O valor tem de ser maior que zero")]
     public decimal Amount { get; set; }
 
     [Required]
