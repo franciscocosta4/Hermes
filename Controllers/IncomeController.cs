@@ -68,4 +68,24 @@ public class IncomeController : Controller
 
         return RedirectToAction("Index", "Dashboard");
     }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken] // Este atributo valida o token anti-CSRF (Cross-Site Request Forgery)
+                               // Garante que o pedido vem realmente do nosso site e não de um site malicioso
+    public IActionResult Delete(int id)
+    {
+        // Procura o livro com a ID especificada na base de dados
+        var income = _context.Incomes.Find(id);
+
+        if (income == null)
+        {
+            return NotFound();
+        }
+        // Remove o livro do contexto da base de dados
+        _context.Incomes.Remove(income);
+        // Guarda as alterações na base de dados (executa o comando SQL de eliminação)
+        _context.SaveChanges();
+
+        return RedirectToAction("Index", "Dashboard");
+    }
 }

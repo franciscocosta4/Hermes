@@ -1,8 +1,3 @@
-using Microsoft.AspNetCore.Identity;
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
 //representa a tabela Incomes na base de dados
 namespace Hermes.Models
 {

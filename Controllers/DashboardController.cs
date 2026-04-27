@@ -52,6 +52,7 @@ public class DashboardController : Controller
         var MonthIncomes = _context.Incomes.Where(c => c.UserId == userid && c.Date >= last30Days)
             .Select(i => new DashboardTransactionViewModel
             {
+                Id = i.Id,
                 Amount = i.Amount,
                 Date = i.Date,
                 Type = "Income",
@@ -62,6 +63,7 @@ public class DashboardController : Controller
             .Where(e => e.UserId == userid && e.Date >= last30Days)
             .Select(e => new DashboardTransactionViewModel
             {
+                Id = e.Id,
                 Amount = e.Amount,
                 Date = e.Date,
                 Type = "Expense",
@@ -85,12 +87,4 @@ public class DashboardController : Controller
         return View(model);
     }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel
-        {
-            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
-        });
-    }
 }
