@@ -81,6 +81,24 @@ public class ExpenseController : Controller
 
         return RedirectToAction("Index", "Dashboard");
     }
+    [HttpPost]
+    [ValidateAntiForgeryToken] // Este atributo valida o token anti-CSRF (Cross-Site Request Forgery)
+                               // Garante que o pedido vem realmente do nosso site e não de um site malicioso
+    public IActionResult Delete(int id)
+    {
+        var expense = _context.Expenses.Find(id);
 
+        if (expense== null)
+        {
+            return NotFound();
+        }
+
+        // Remove o livro do contexto da base de dados
+        _context.Expenses.Remove(expense);
+        // Guarda as alterações na base de dados (executa o comando SQL de eliminação)
+        _context.SaveChanges();
+
+        return RedirectToAction("Index", "Dashboard");
+    }
 
 }

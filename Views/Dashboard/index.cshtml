@@ -1,10 +1,9 @@
 @model Hermes.Models.DashboardViewModel // vai ser preciso para carregar conteudo dinamico na dashboard vindo do
-viewmodel
 <div class="main-content">
     <div class="flex-between mb-2">
         <h2>Overview</h2>
         <div>
-            <a href="add-expense.html" class="btn-outline btn-sm"><i class="fas fa-plus"></i> New</a>
+            <a asp-controller="Expense" asp-action="Create" class="btn-outline btn-sm"><i class="fas fa-plus"></i> New</a>
             <a href="#" class="btn-outline btn-sm" style="margin-left:8px;"><i class="fas fa-download"></i>
                 CSV</a>
             </div>
@@ -65,13 +64,42 @@ viewmodel
                                     <td>@item.Date</td>
                                     <td>@item.Category</td>
                                     <td>@item.Type</td>
-                                    <td><a href="#"><i class="far fa-edit action-icon"></i></a><a href="#"><i
-                                    class="far fa-trash-alt action-icon"></i></a></td>
+                                 <td>
+                                    @if (item.Category != "-"){
+                                    <a asp-controller="Expense" asp-action="Edit">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <i class="far fa-edit action-icon"></i>
+                                    </a>
+                                    <form asp-controller="Expense"asp-action="Delete"method="post"style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" style="background:none; border:none; padding:0;">
+                                            <i class="far fa-trash-alt action-icon"></i>
+                                        </button>
+                                    </form>
+                                    }
+                                    else{
+                                    <a asp-controller="Income" asp-action="Edit">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <i class="far fa-edit action-icon"></i>
+                                    </a>
+
+                                    <form asp-controller="Income"asp-action="Delete"method="post"style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" style="background:none; border:none; padding:0;">
+                                            <i class="far fa-trash-alt action-icon"></i>
+                                        </button>
+                                    </form>
+                                    }
+                                    </td>
                                 </tr>
-                            }
-                                    </tbody>
-                                </table>
-                            </div>
+                                }
+                            </tbody>
+                        </table>
+                        </div>
                         </div>
                         @* <div style="margin-top: 2rem; display: flex; gap: 24px;">
                             <div

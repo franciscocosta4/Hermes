@@ -37,7 +37,7 @@ public class CategoryController : Controller
             // estes dados são passados pois são precisos para a sidebar
             FullName = user.FullName,
             Email = user.Email,
-            Initial = user.FullName?[0].ToString().ToUpper()
+            Initial = user.FullName?[0].ToString().ToUpper(),
         };
 
         return View("create", model);
