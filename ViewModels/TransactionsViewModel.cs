@@ -9,6 +9,10 @@ namespace Hermes.Models
 
         // podemos usar DashboardTransactionViewModel na pagina porque os dados acabam por ser os mesmos 
         public List<DashboardTransactionViewModel>? Transactions { get; set; }
+        
+        public int CurrentPage {get;set;}
+
+        public int TotalPages {get;set;}
 
     }
 }
