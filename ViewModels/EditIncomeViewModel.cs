@@ -6,6 +6,7 @@ namespace Hermes.Models
     {
         // levam ? (nullable) porque este ViewModel é reutilizado em contexto de GET (preencher os inputs da pagina de edit)
         // e POST (atualizar na bd o income), onde não são enviados dados do user.
+        // deveria haver um viewmodel para a sidebar para evitar-mos repetir codigo
         public string? FullName { get; set; }
         public string? Email { get; set; }
         public string? Initial { get; set; }

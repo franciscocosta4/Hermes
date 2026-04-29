@@ -1,25 +1,26 @@
-@model Hermes.Models.CreateExpenseViewModel
-
+@model Hermes.Models.EditExpenseViewModel
 @{
     Layout = "_Layout";
 }
 <div class="main-content" style="max-width:600px;">
     <div class="card">
-        <h3 style="margin-bottom:1.8rem;">New expense</h3>
-        <form asp-action="Create" method="post">
+        <h3>Edit expense</h3>
+        <br />
+        <form asp-action="Edit" method="post" >
             @Html.AntiForgeryToken()
+            @* <div class="form-group"><label>Source</label><input name="source" placeholder="Salary / Freelance" required>
+            </div> *@
             <div class="form-group"><label asp-for="Description">Description</label><input asp-for="Description"
                                                                                            type="text" placeholder="e.g., Rent" required>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="form-group"><label asp-for="Amount">Amount ($)</label><input asp-for="Amount" type="number"
-                                                                                     step="0.01" required>
-                <span asp-validation-for="Amount" class="text-danger"></span>
+            <div class="form-group"><label  asp-for="Amount">Amount ($)</label><input asp-for="Amount" type="number" step="0.01">
+            <span asp-validation-for="Amount" class="text-danger"></span>
             </div>
-            <div class="form-group"><label asp-for="Date">Date</label><input asp-for="Date" type="date" max="@DateTime.UtcNow.ToString("yyyy-MM-dd")">
-                <span asp-validation-for="Date" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+            <div class="form-group"><label asp-for="Date">Date</label><input asp-for="Date" type="date"max="@DateTime.UtcNow.ToString("yyyy-MM-dd")"x\></div>
+            <!-- <div class="form-group"><label asp-for="CategoryId">CategoryID(debug)</label><input asp-for="CategoryId" type="number"></div> -->
+            <span asp-validation-for="Date" class="text-danger"></span>
+                        <div class="form-group">
                 <label>Category</label>
                 <select name="categoryId" class="form-control">
 
@@ -27,7 +28,7 @@
                     {
                         foreach (var category in ViewBag.Categories)
                         {
-                            <option value="@category.Id">
+                            <option value="@category.Id" selected="@(category.Id == Model.CategoryId ? "selected" : null)">
                                 @category.Name
                             </option>
                         }
@@ -36,26 +37,21 @@
                     {
                         <option disabled selected>
                             No Categories available
-                        </option>
+                        </option> 
                     }
 
                 </select>
-
-                @if (ViewBag.Categories == null || !((IEnumerable<dynamic>)ViewBag.Categories).Any())
-                {
-                    <small class="text-muted">
-                        
-                        <a asp-controller="Category" asp-action="Create" style="color:#5e5e5e;">
-                            Add expense category
-                        </a>
-                    </small>
-                }
             </div>
             <div style="display:flex; gap:16px;">
-                <button type="submit" class="btn">Save expense</button>
+                <button type="submit" class="btn">Update expense</button>
                 <a asp-controller="Dashboard" asp-action="Index" class="btn-outline">Cancel</a>
             </div>
+            
+            @* <div asp-validation-summary="All"></div>s *@
         </form>
     </div>
 </div>
 </div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}   

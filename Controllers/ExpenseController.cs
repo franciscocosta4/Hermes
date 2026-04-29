@@ -42,7 +42,7 @@ public class ExpenseController : Controller
         // Evita termos de passar mais 2 parametros na ExpenseViewModel
         ViewBag.Categories = categories;
 
-        var model = new ExpenseViewModel
+        var model = new CreateExpenseViewModel
         {
             // estes dados são passados pois são precisos para a sidebar e formatação da data
             FullName = user.FullName,
@@ -59,7 +59,7 @@ public class ExpenseController : Controller
     {
         // verificamos se os dados do input do CreateExpenseViewModel são válidos
         if (!ModelState.IsValid)
-            return View(model); //! neste momento nao funciona pois vai para /create sendo que tem se ser /create-expense
+            return View(model);
 
         // pega no user autenticado
         // usamos await porque a query pode demorar um pouco 
@@ -81,6 +81,64 @@ public class ExpenseController : Controller
 
         return RedirectToAction("Index", "Dashboard");
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id){
+        var user = await _userManager.GetUserAsync(User);
+        // não precisa de ser assincrona pois nao vai a bd, apenas pega no id do User
+        var userid = _userManager.GetUserId(User);
+        // aqui percorre as categorias e guarda as relacionadas ao user logado
+        var categories = _context.Categories.Where(c => c.UserId == userid).ToList();
+        // ainda precisamos de preencher a viewbag para o select com as categorias
+        ViewBag.Categories = categories;
+
+        var expense = _context.Expenses.Find(id);
+        if (expense == null)
+        {
+            return NotFound();
+        }
+
+        var model = new EditExpenseViewModel
+        {
+            FullName = user.FullName,
+            Email = user.Email,
+            Initial = user.FullName?[0].ToString().ToUpper(),
+            Amount = expense.Amount,
+            Description = expense.Description,
+            Date = expense.Date,
+            // UserId = user.Id,
+            CategoryId = expense.CategoryId 
+        };
+        return View("edit", model);
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(EditExpenseViewModel editedExpense)
+    {
+        // verificamos se os dados do input são válidos
+        if (!ModelState.IsValid)
+            return View(editedExpense);
+
+        // pega no user autenticado
+        var user = await _userManager.GetUserAsync(User);
+
+        var existingExpense = _context.Expenses.Find(editedExpense.Id);
+        if (existingExpense.UserId != user.Id)
+            return Forbid();
+
+        existingExpense.Amount = editedExpense.Amount;
+        existingExpense.Description = editedExpense.Description;
+        existingExpense.Date = editedExpense.Date;
+        existingExpense.CategoryId = editedExpense.CategoryId;
+        // existingExpense.UserId = user.Id;
+
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction("Index", "Dashboard");
+    }
+
+
     [HttpPost]
     [ValidateAntiForgeryToken] // Este atributo valida o token anti-CSRF (Cross-Site Request Forgery)
                                // Garante que o pedido vem realmente do nosso site e não de um site malicioso

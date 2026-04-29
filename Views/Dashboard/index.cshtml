@@ -66,9 +66,7 @@
                                     <td>@item.Type</td>
                                  <td>
                                     @if (item.Category != "-"){
-                                    <a asp-controller="Expense" asp-action="Edit">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="id" value="@item.Id" />
+                                    <a asp-controller="Expense" asp-action="Edit" asp-route-id="@item.Id">
                                         <i class="far fa-edit action-icon"></i>
                                     </a>
                                     <form asp-controller="Expense"asp-action="Delete"method="post"style="display:inline;">

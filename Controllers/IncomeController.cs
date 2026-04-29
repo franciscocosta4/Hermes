@@ -107,7 +107,7 @@ public class IncomeController : Controller
 
         existingIncome.Amount = editedIncome.Amount;
         existingIncome.Date = editedIncome.Date;
-        existingIncome.UserId = user.Id;
+        // existingIncome.UserId = user.Id;
 
         await _context.SaveChangesAsync();
 
