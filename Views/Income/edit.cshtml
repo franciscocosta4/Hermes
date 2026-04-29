@@ -1,12 +1,12 @@
-@model Hermes.Models.CreateIncomeViewModel
+@model Hermes.Models.EditIncomeViewModel
 @{
     Layout = "_Layout";
 }
 <div class="main-content" style="max-width:600px;">
     <div class="card">
-        <h3>Record income</h3>
+        <h3>Edit income</h3>
         <br />
-        <form asp-action="Create" method="post" >
+        <form asp-action="Edit" method="post" >
             @Html.AntiForgeryToken()
             @* <div class="form-group"><label>Source</label><input name="source" placeholder="Salary / Freelance" required>
             </div> *@
@@ -16,10 +16,10 @@
             <div class="form-group"><label asp-for="Date">Date</label><input asp-for="Date" type="date"max="@DateTime.UtcNow.ToString("yyyy-MM-dd")"x\></div>
             <span asp-validation-for="Date" class="text-danger"></span>
             <div style="display:flex; gap:16px;">
-                <button type="submit" class="btn">Add income</button>
+                <button type="submit" class="btn">Update income</button>
                 <a asp-controller="Dashboard" asp-action="Index" class="btn-outline">Cancel</a>
             </div>
-            @* <div asp-validation-summary="All"></div> *@
+            @* <div asp-validation-summary="All"></div>s *@
         </form>
     </div>
 </div>
