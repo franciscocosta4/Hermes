@@ -20,6 +20,7 @@ Hermes is a personal finances manager for the web made in .net. It allows users 
 
 ### Optional / Future Features
 * Categories for expenses
+* Transaction search
 * Filter expenses by category
 * Monthly budget tracking
 * Alerts when exceeding budget or spending more than the average
