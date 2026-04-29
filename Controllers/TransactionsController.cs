@@ -17,7 +17,11 @@ public class TransactionsController : Controller
         _context = context;
         _userManager = userManager;
     }
-    public async Task<IActionResult> Index()
+    // page vai representar a pagina atual (1 por padrão)
+    // "pageSize" representa quantos registos queremos mostrar por página
+    // Estes valores vêm da URL, por exemplo:
+    // /Transactions/Index?page=2&pageSize=10
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
     {
         var user = await _userManager.GetUserAsync(User);
         // não precisa de ser assincrona pois nao vai a bd, apenas pega no id do User
@@ -42,15 +46,33 @@ public class TransactionsController : Controller
                 Type = "Expense",
                 Category = e.Category.Name
             });
-        // junta os incomes e as despesas em uma lista
-        var Transactions = Incomes.Union(Expenses).OrderBy(t => t.Date).ToList();
 
+        // Junta incomes e expenses numa única query
+        // Ainda NÃO executa na base de dados (IQueryable)
+        var query = Incomes.Union(Expenses)
+            .OrderByDescending(t => t.Date); // ordena por data (mais recentes primeiro)
+
+        // Conta o total de registos existentes na query
+        // Isto serve para calcular o número total de páginas
+        var totalItems = query.Count();
+
+        // Aqui aplica-se a paginação:
+        // Skip = ignora os registos das páginas anteriores
+        // Take = traz apenas os registos da página atual
+        var transactions = query
+            .Skip((page - 1) * pageSize) // calcula quantos registos saltar
+            .Take(pageSize)              // limita ao tamanho da página
+            .ToList();                   // executa a query na base de dados
+            
         var model = new TransactionsViewModel
         {
             FullName = user.FullName,
             Email = user.Email,
             Initial = user.FullName?[0].ToString().ToUpper(),
-            Transactions = Transactions
+            // apenas os registos da página atual
+            Transactions = transactions,
+            CurrentPage = page,
+            TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
         };
 
         return View(model);
