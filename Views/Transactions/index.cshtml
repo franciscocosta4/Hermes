@@ -1,0 +1,67 @@
+@model Hermes.Models.TransactionsViewModel // vai ser preciso para carregar conteudo dinamico na dashboard vindo do
+<div class="main-content">
+    <div class="flex-between mb-2">
+        <h2>All your transactions</h2>
+        <div>
+            <a asp-controller="Expense" asp-action="Create" class="btn-outline btn-sm"><i class="fas fa-plus"></i> New</a>
+            </div>
+        </div>
+            <div style="margin-top: 2.5rem;">
+                <div >
+                    <h4>Search a transaction</h4>
+                    <br/>
+                    <input placeholder="car ... " />
+                </div> 
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Type</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Transactions)
+                            {
+                                <tr>
+                                    <td>@item.Amount$</td>
+                                    <td>@item.Date</td>
+                                    <td>@item.Category</td>
+                                    <td>@item.Type</td>
+                                 <td>
+                                    @if (item.Category != "-"){
+                                    <a asp-controller="Expense" asp-action="Edit" asp-route-id="@item.Id">
+                                        <i class="far fa-edit action-icon"></i>
+                                    </a>
+                                    <form asp-controller="Expense"asp-action="Delete"method="post"style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" style="background:none; border:none; padding:0;">
+                                            <i class="far fa-trash-alt action-icon"></i>
+                                        </button>
+                                    </form>
+                                    }
+                                    else{
+                                    <a asp-controller="Income" asp-action="Edit" asp-route-id="@item.Id">
+                                        <i class="far fa-edit action-icon"></i>
+                                    </a>
+                                    <form asp-controller="Income"asp-action="Delete"method="post"style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" style="background:none; border:none; padding:0;">
+                                            <i class="far fa-trash-alt action-icon"></i>
+                                        </button>
+                                    </form>
+                                    }
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                        </div>
+                        </div>
+                    </div>
+                </div>
