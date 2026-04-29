@@ -3,12 +3,14 @@ using Hermes.Models;
 
 namespace Hermes.Models
 {
-    public class CreateExpenseViewModel
+    public class EditExpenseViewModel
     {
         // passamos os dados que são necessários para a sidebar:
         public string? FullName { get; set; }
         public string? Email { get; set; }
         public string? Initial { get; set; }
+
+        public int Id { get; set; }
 
         [Required]
         [Range(0.01, double.MaxValue,  ErrorMessage = "The amount has to be greater than 0" )]
