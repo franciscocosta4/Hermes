@@ -80,12 +80,9 @@
                                     </form>
                                     }
                                     else{
-                                    <a asp-controller="Income" asp-action="Edit">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="id" value="@item.Id" />
+                                    <a asp-controller="Income" asp-action="Edit" asp-route-id="@item.Id">
                                         <i class="far fa-edit action-icon"></i>
                                     </a>
-
                                     <form asp-controller="Income"asp-action="Delete"method="post"style="display:inline;">
                                     @Html.AntiForgeryToken()
                                         <input type="hidden" name="id" value="@item.Id" />
