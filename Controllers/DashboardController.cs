@@ -47,6 +47,9 @@ public class DashboardController : Controller
         decimal Sum90DaysExpenses = _context.Expenses.Where(e => e.UserId == userid && e.Date >= last90Days).Sum(e => e.Amount);
 
         decimal MonthBalance = MonthIncomeSum - MonthExpenseSum;
+
+        
+
         
         // pega nos incomes do ultimo mes e manda para DashboardTransactionViewModel
         var MonthIncomes = _context.Incomes.Where(c => c.UserId == userid && c.Date >= last30Days)
@@ -71,6 +74,8 @@ public class DashboardController : Controller
             });
         // junta os incomes e as despesas do mes em uma lista
         var MonthTransactions = MonthIncomes.Union(MonthExpenses).OrderBy(t => t.Date).ToList();
+
+  
 
         var model = new DashboardViewModel
         {

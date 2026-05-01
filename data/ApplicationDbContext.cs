@@ -42,7 +42,6 @@ namespace Hermes.Data
                 .WithMany(u => u.Expenses)
                 .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
-
             // Expense -> Category
             builder.Entity<Expense>()
                 .HasOne(e => e.Category)

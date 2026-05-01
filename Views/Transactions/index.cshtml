@@ -9,71 +9,109 @@
         </div>
         <div style="margin-top: 2.5rem;">
             <div>
-                <h4>Search a transaction</h4>
+                <h4>Search for a transaction:</h4>
                 <br />
-                <input placeholder="car ... " />
-            </div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Amount</th>
-                            <th>Date</th>
-                            <th>Category</th>
-                            <th>Type</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.Transactions)
-                        {
-                            <tr>
-                                <td>@item.Amount$</td>
-                                <td>@item.Date</td>
-                                <td>@item.Category</td>
-                                <td>@item.Type</td>
-                                <td>
-                                    @if (item.Category != "-")
-                                    {
-                                        <a asp-controller="Expense" asp-action="Edit" asp-route-id="@item.Id">
-                                            <i class="far fa-edit action-icon"></i>
-                                        </a>
-                                        <form asp-controller="Expense" asp-action="Delete" method="post" style="display:inline;">
-                                            @Html.AntiForgeryToken()
-                                            <input type="hidden" name="id" value="@item.Id" />
-                                            <button type="submit" style="background:none; border:none; padding:0;">
-                                                <i class="far fa-trash-alt action-icon"></i>
-                                            </button>
-                                        </form>
-                                    }
-                                    else
-                                    {
-                                        <a asp-controller="Income" asp-action="Edit" asp-route-id="@item.Id">
-                                            <i class="far fa-edit action-icon"></i>
-                                        </a>
-                                        <form asp-controller="Income" asp-action="Delete" method="post" style="display:inline;">
-                                            @Html.AntiForgeryToken()
-                                            <input type="hidden" name="id" value="@item.Id" />
-                                            <button type="submit" style="background:none; border:none; padding:0;">
-                                                <i class="far fa-trash-alt action-icon"></i>
-                                            </button>
-                                        </form>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-                @if (Model.CurrentPage > 1)
-                {
-                    <a asp-action="Index" asp-route-page="@(Model.CurrentPage - 1)">Anterior</a>
-                }
+                <form method="get" asp-action="Index">
+                    <input class="search-input" type="text" name="searchinput" value="@Model.Search"
+                           placeholder="car loan ... " />
+                    <button style="margin-left:1rem;" type="submit" class="btn btn-sm"><i
+                        class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                    @* <div style="display:flex;">
+                        <p>
+                            from:
+                        </p>
+                        <input class="search-input" type="date" max="@DateTime.UtcNow.ToString("yyyy-MM-dd")">
+                    </input>
+                    <p>
+                        to:
+                    </p>
+                    <input class="search-input" type="date" max="@DateTime.UtcNow.ToString("yyyy-MM-dd")">
+                </input>
+                <p>
+                    category:
+                </p>
+                <select class="search-input" name="categoryId">
+                    <option value="">-- All categories --</option>
 
-                @if (Model.CurrentPage < Model.TotalPages)
+                    @if (ViewBag.Categories != null && ((IEnumerable<dynamic>)ViewBag.Categories).Any())
+                    {
+                        foreach (var category in ViewBag.Categories)
+                        {
+                            <option value="@category.Id">
+                                @category.Name
+                            </option>
+                        }
+                    }
+                </select>
+                        
+            </div> *@
+        </form>
+        <br />
+    </div>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Amount</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Transactions)
                 {
-                    <a asp-action="Index" asp-route-page="@(Model.CurrentPage + 1)">Seguinte</a>
+                    <tr>
+                        <td>@item.Amount$</td>
+                        <td>@item.Type</td>
+                        <td>@item.Date</td>
+                        <td>@item.Description</td>
+                        <td>@item.Category</td>
+                        <td>
+                            @if (item.Category != "-")
+                            {
+                                <a asp-controller="Expense" asp-action="Edit" asp-route-id="@item.Id">
+                                    <i class="far fa-edit action-icon"></i>
+                                </a>
+                                <form asp-controller="Expense" asp-action="Delete" method="post" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" style="background:none; border:none; padding:0;">
+                                        <i class="far fa-trash-alt action-icon"></i>
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <a asp-controller="Income" asp-action="Edit" asp-route-id="@item.Id">
+                                    <i class="far fa-edit action-icon"></i>
+                                </a>
+                                <form asp-controller="Income" asp-action="Delete" method="post" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" style="background:none; border:none; padding:0;">
+                                        <i class="far fa-trash-alt action-icon"></i>
+                                    </button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
                 }
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+@if (Model.CurrentPage > 1)
+{
+    <a asp-action="Index" asp-route-page="@(Model.CurrentPage - 1)" style="color:#5e5e5e;">Anterior</a>
+}
+
+@if (Model.CurrentPage < Model.TotalPages)
+{
+    <a asp-action="Index" asp-route-page="@(Model.CurrentPage + 1)" style="color:#5e5e5e;">Seguinte</a>
+}
 </div>
