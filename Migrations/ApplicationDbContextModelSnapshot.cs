@@ -172,6 +172,40 @@ namespace Hermes.Migrations
                     b.ToTable("Incomes");
                 });
 
+            modelBuilder.Entity("Hermes.Models.Transaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Category")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Transactions");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -345,6 +379,17 @@ namespace Hermes.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Hermes.Models.Transaction", b =>
+                {
+                    b.HasOne("Hermes.Models.ApplicationUser", "User")
+                        .WithMany("Transactions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -403,6 +448,8 @@ namespace Hermes.Migrations
                     b.Navigation("Expenses");
 
                     b.Navigation("Incomes");
+
+                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("Hermes.Models.Category", b =>

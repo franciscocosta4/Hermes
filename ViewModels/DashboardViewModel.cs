@@ -14,6 +14,8 @@ namespace Hermes.Models
         public decimal MonthBalance { get; set; }
         public decimal Sum90DaysExpenses { get; set; }
 
+        public bool Overspending {get;set;}
+
         public List<DashboardTransactionViewModel>? MonthTransactions { get; set; }
 
     }

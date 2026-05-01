@@ -17,5 +17,7 @@ namespace Hermes.Models
 
          // Relação inversa (1 user → muitas expenses)
         public ICollection<Expense> Expenses { get; set; }  
+
+
     }
 }

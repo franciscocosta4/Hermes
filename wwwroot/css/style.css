@@ -138,7 +138,9 @@ label {
     text-transform: uppercase;
     letter-spacing: 0.3px;
 }
-
+.search-input{
+    width: 50%;
+}
 input, select {
     width: 100%;
     padding: 14px 16px;

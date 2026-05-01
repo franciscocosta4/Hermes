@@ -21,22 +21,29 @@ public class TransactionsController : Controller
     // "pageSize" representa quantos registos queremos mostrar por página
     // Estes valores vêm da URL, por exemplo:
     // /Transactions/Index?page=2&pageSize=10
-    public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 10, string searchinput = null)
     {
         var user = await _userManager.GetUserAsync(User);
-        // não precisa de ser assincrona pois nao vai a bd, apenas pega no id do User
         var userid = _userManager.GetUserId(User);
+        //percorre as categorias e guarda as relacionadas ao user logado
+        var categories = _context.Categories.Where(c => c.UserId == userid).ToList();
 
-        var Incomes = _context.Incomes.Where(c => c.UserId == userid)
+        // Neste caso usamos ViewBag por ser mais simples de preencher e enviar dados para a view.
+        // Evita termos de passar mais 2 parametros na ExpenseViewModel
+        ViewBag.Categories = categories;
+
+        var incomes = _context.Incomes
+            .Where(c => c.UserId == userid) 
             .Select(i => new DashboardTransactionViewModel
             {
                 Id = i.Id,
                 Amount = i.Amount,
                 Date = i.Date,
                 Type = "Income",
-                Category = "-"
+                Description = "-",
+                Category = "-",
             });
-        var Expenses = _context.Expenses
+        var expenses = _context.Expenses
             .Where(e => e.UserId == userid)
             .Select(e => new DashboardTransactionViewModel
             {
@@ -44,13 +51,28 @@ public class TransactionsController : Controller
                 Amount = e.Amount,
                 Date = e.Date,
                 Type = "Expense",
-                Category = e.Category.Name
+                Description = e.Description,
+                Category = e.Category.Name,
             });
 
-        // Junta incomes e expenses numa única query
-        // Ainda NÃO executa na base de dados (IQueryable)
-        var query = Incomes.Union(Expenses)
-            .OrderByDescending(t => t.Date); // ordena por data (mais recentes primeiro)
+        // Junta primeiro em memória SÓ depois de filtrar base
+        var query = incomes.Concat(expenses);
+
+        // filtro de pesquisa
+        if (!string.IsNullOrEmpty(searchinput))
+        {
+            searchinput = searchinput.Trim().ToLower();
+
+            query = query.Where(t =>
+                (t.Category ?? "").ToLower().Contains(searchinput) ||
+                (t.Type ?? "").ToLower().Contains(searchinput) ||
+                (t.Description ?? "").ToLower().Contains(searchinput)
+            );
+
+        }
+
+        // só aqui é que ordenamos
+        query = query.OrderByDescending(t => t.Date);
 
         // Conta o total de registos existentes na query
         // Isto serve para calcular o número total de páginas
@@ -63,7 +85,7 @@ public class TransactionsController : Controller
             .Skip((page - 1) * pageSize) // calcula quantos registos saltar
             .Take(pageSize)              // limita ao tamanho da página
             .ToList();                   // executa a query na base de dados
-            
+
         var model = new TransactionsViewModel
         {
             FullName = user.FullName,
@@ -72,9 +94,10 @@ public class TransactionsController : Controller
             // apenas os registos da página atual
             Transactions = transactions,
             CurrentPage = page,
-            TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
+            TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize),
+            Search = searchinput, // para manter o input do user na barra de pesquisa
         };
 
-        return View(model);
+        return View("index", model);
     }
 }
