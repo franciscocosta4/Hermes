@@ -13,33 +13,56 @@
             <div class="card">
                 <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">Balance (30d)</div>
                 <div class="text-large">$@Model?.MonthBalance</div>
-                <span style="color:#0b0b0b;">↑ 12% vs last month</span>
+                <span style="color:#0b0b0b;">↑ 12% vs mês passado</span>
             </div>
             <div class="card">
                 <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">Income (30d)</div>
                 <div class="text-large">$@Model?.MonthIncomeSum</div>
-                <span class="text-muted">+ $1,200 sponsorship</span>
+                @* <span class="text-muted">+ $1,200 sponsorship</span> *@
             </div>
             <div class="card">
                 <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">Expenses (30d)</div>
                 <div class="text-large">$@Model?.MonthExpenseSum</div>
-                <span class="text-muted">vs avg $3,880</span>
+                <span class="text-muted">vs avg que deve ser calculada</span>
             </div>
             <div class="card" style="border-left: 4px solid #0b0b0b;">
                 <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">90d avg expense</div>
-                <div class="text-large">$@Model?.Sum90DaysExpenses</div>
+                <div class="text-large">$@Model?.averageMonthly90Days</div>
+                 @if (Model.Overspending != false){
                 <span class="badge badge-light" style="margin-top:8px;">overspending alert</span>
+                }
             </div>
         </div>
-
+    @if (Model.Overspending != false){ 
         <div class="card" style="margin-top: 24px; background: #f9f9f9;">
             <div class="flex-between">
-                <div><i class="fas fa-exclamation-triangle" style="margin-right: 10px;"></i> <strong>Overspending
-                    detected</strong> — Last 30 days: $4,170 vs 90d avg $3,880 (+7.5%)</div>
-                    <span class="badge">review</span>
+                <div><i class=" fa fa-bell" style="margin-right: 10px;"></i> <strong>Overspending
+                    detected</strong> — Last 30 days: $@Model?.MonthExpenseSum vs 90d avg $@Model?.averageMonthly90Days (+alguma percentagem%)</div>
+                    @* <span class="badge">review</span> *@
                 </div>
             </div>
-
+    }
+<div class="card" style="margin-top: 24px; background: #fffbee; border-left: 3px solid #fbc02d;">
+    <div class="flex-between">
+        <div>
+            <i class="fas fa-exclamation-triangle" style="margin-right: 10px; color: #f9a825;"></i>
+            <strong style="color: #f57f17;">Close to your month budget!!</strong>
+            — Last 30 days: $@Model?.MonthExpenseSum vs month budget: $budget para o mês
+        </div>
+        @* <span class="badge">review</span> *@
+    </div>
+</div>
+<div class="card" style="margin-top: 24px; background: #fdecea; border-left: 3px solid #e53935;">
+    <div class="flex-between">
+        <div>
+            <i class="fas fa-exclamation-circle" style="margin-right: 10px; color: #d32f2f;"></i>
+            <strong style="color: #b71c1c;">Budget exceeded</strong>
+            — Last 30 days: $@Model?.MonthExpenseSum vs month budget: $budget para o mês
+        </div>
+        @* <span class="badge">review</span> *@
+    </div>
+</div>
+        
             <div style="margin-top: 2.5rem;">
                 <div class="flex-between">
                     <h3>Recent transactions <br /> <small>(30 days)</small></h3>

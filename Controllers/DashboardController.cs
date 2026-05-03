@@ -46,11 +46,11 @@ public class DashboardController : Controller
         // percorre as despesas e guarda as relacionadas ao user logado e registado nos últimos 90 dias
         decimal Sum90DaysExpenses = _context.Expenses.Where(e => e.UserId == userid && e.Date >= last90Days).Sum(e => e.Amount);
 
+        // faz a media das despesas dos ultimos 3 meses e mete com 2 casas decimais
+        decimal averageMonthly90Days = Math.Round(Sum90DaysExpenses / 3, 2, MidpointRounding.AwayFromZero);
+
         decimal MonthBalance = MonthIncomeSum - MonthExpenseSum;
 
-        
-
-        
         // pega nos incomes do ultimo mes e manda para DashboardTransactionViewModel
         var MonthIncomes = _context.Incomes.Where(c => c.UserId == userid && c.Date >= last30Days)
             .Select(i => new DashboardTransactionViewModel
@@ -61,7 +61,8 @@ public class DashboardController : Controller
                 Type = "Income",
                 Category = "-"
             });
-         // pega nas despesas do ultimo mes e manda para DashboardTransactionViewModel
+
+        // pega nas despesas do ultimo mes e manda para DashboardTransactionViewModel
         var MonthExpenses = _context.Expenses
             .Where(e => e.UserId == userid && e.Date >= last30Days)
             .Select(e => new DashboardTransactionViewModel
@@ -75,7 +76,8 @@ public class DashboardController : Controller
         // junta os incomes e as despesas do mes em uma lista
         var MonthTransactions = MonthIncomes.Union(MonthExpenses).OrderBy(t => t.Date).ToList();
 
-  
+        // se MonthExpenseSum for maior que Sum90DaysExpenses fica true
+        bool isOverspending = MonthExpenseSum > averageMonthly90Days;
 
         var model = new DashboardViewModel
         {
@@ -85,11 +87,14 @@ public class DashboardController : Controller
             MonthIncomeSum = MonthIncomeSum,
             MonthExpenseSum = MonthExpenseSum,
             MonthBalance = MonthBalance,
-            Sum90DaysExpenses = Sum90DaysExpenses,
-            MonthTransactions = MonthTransactions
+            averageMonthly90Days = averageMonthly90Days,
+            MonthTransactions = MonthTransactions,
+            Overspending = isOverspending
         };
 
         return View(model);
+
+
     }
 
 }

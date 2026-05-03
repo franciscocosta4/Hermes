@@ -12,7 +12,7 @@ namespace Hermes.Models
         public decimal MonthIncomeSum { get; set; }
         public decimal MonthExpenseSum { get; set; }
         public decimal MonthBalance { get; set; }
-        public decimal Sum90DaysExpenses { get; set; }
+        public decimal averageMonthly90Days { get; set; }
 
         public bool Overspending {get;set;}
 
