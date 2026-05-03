@@ -4,10 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Hermes.Models;
 using Microsoft.AspNetCore.Identity;
 using Hermes.Data;
+
 namespace Hermes.Controllers;
 
 [Authorize]
-public class CategoryController : Controller
+public class BudgetController : Controller
 {
     /// <summary>
     /// Campo privado que armazena a instância do contexto da base de dados.
@@ -22,50 +23,61 @@ public class CategoryController : Controller
     /// O ASP.NET Core fornece automaticamente a instância do contexto.
     /// </summary>
     /// <param name="context">Instância do contexto da base de dados</param>
-    public CategoryController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+    public BudgetController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
     {
         _context = context;
         _userManager = userManager;
     }
 
+    [HttpGet]
     public async Task<IActionResult> Create()
     {
         var user = await _userManager.GetUserAsync(User);
 
-        var model = new CreateCategoryViewModel
+        var model = new CreateBudgetViewModel
         {
-            // estes dados são passados pois são precisos para a sidebar
             FullName = user.FullName,
             Email = user.Email,
             Initial = user.FullName?[0].ToString().ToUpper(),
         };
 
-        return View("create", model);
+        return View(model);
     }
-    
+
     [HttpPost]
-    public async Task<IActionResult> Create(CreateCategoryViewModel model)
+    public async Task<IActionResult> Create(CreateBudgetViewModel model)
     {
-        // verificamos se os dados do input do CreateExpenseViewModel são válidos
         if (!ModelState.IsValid)
             return View(model);
 
         // pega no user autenticado
         var user = await _userManager.GetUserAsync(User);
 
-        //ao usar o model "Category" garantimos que o userId ainda pode ser registado mesmo tendo: CreateCategoryViewModel model 
-        // para que o user não consiga fazer um registo com outro id, por exemplo .
-        var category = new Category
+        var Budget = new Budget
         {
-            Name = model.Name,
+            Limit_amount = model.Limit_amount,
+            Month = model.Month,
+            Year = model.Year,
             UserId = user.Id
         };
 
-        _context.Categories.Add(category);
+        _context.Budgets.Add(Budget);
         await _context.SaveChangesAsync();
 
         return RedirectToAction("Index", "Dashboard");
     }
 
+    public IActionResult Delete(int id)
+    {
+        var Budget = _context.Budgets.Find(id);
 
+        if (Budget == null)
+        {
+            return NotFound();
+        }
+        _context.Budgets.Remove(Budget);
+        _context.SaveChanges();
+
+        return RedirectToAction("Index", "Dashboard");
+    }
 }

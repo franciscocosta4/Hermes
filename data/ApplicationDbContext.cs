@@ -14,10 +14,10 @@ namespace Hermes.Data
         }
 
         // Aqui podemos adicionar outras tabelas da app
-        // public DbSet<Produto> Produtos { get; set; }
         public DbSet<Income> Incomes { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Expense> Expenses { get; set; }
+        public DbSet<Budget> Budgets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -42,6 +42,14 @@ namespace Hermes.Data
                 .WithMany(u => u.Expenses)
                 .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Budget -> User
+            builder.Entity<Budget>()
+                .HasOne(e => e.User)
+                .WithMany(u => u.Budgets)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             // Expense -> Category
             builder.Entity<Expense>()
                 .HasOne(e => e.Category)

@@ -16,7 +16,10 @@ namespace Hermes.Models
         public ICollection<Category> Categories { get; set; }
 
          // Relação inversa (1 user → muitas expenses)
-        public ICollection<Expense> Expenses { get; set; }  
+        public ICollection<Expense> Expenses { get; set; }
+
+         // Relação inversa (1 user → muitos budgets)
+        public ICollection<Budget> Budgets { get; set; }  
 
 
     }
