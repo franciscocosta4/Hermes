@@ -30,6 +30,21 @@ public class BudgetController : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> Index()
+    {
+        var user = await _userManager.GetUserAsync(User);
+
+        var model = new DashboardViewModel //! por enquanto vai DashboardViewModel
+        {
+            FullName = user.FullName,
+            Email = user.Email,
+            Initial = user.FullName?[0].ToString().ToUpper(),
+        };
+
+        return View("index", model);
+    }
+
+    [HttpGet]
     public async Task<IActionResult> Create()
     {
         var user = await _userManager.GetUserAsync(User);
