@@ -1,8 +1,11 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace Hermes.Models
 {
+    [Index(nameof(UserId), nameof(Month), nameof(Year), IsUnique = true)] // garante que só pode haver um budget por mês para cada user
     public class Budget
     {
-        public int id {get;set;}
+        public int Id {get;set;}
         public int Month {get;set;}
         public int Year {get;set;}
         public decimal Limit_amount {get;set;}

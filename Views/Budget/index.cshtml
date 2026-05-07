@@ -1,3 +1,7 @@
+@model Hermes.Models.BudgetViewModel
+@{
+    Layout = "_Layout";
+}
 <div class="main-content">
     <div class="flex-between mb-2">
         <h2> Budgets Overview</h2>
@@ -15,15 +19,15 @@
                     <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">
                         Monthly Budget Usage
                     </div>
-                    <div class="text-large">$1,850 <span style="font-size:1rem; color:#7a7a7a;">/ $2,000</span></div>
+                    <div class="text-large">$@Model?.MonthExpenseSum <span style="font-size:1rem; color:#7a7a7a;">/ $@Model?.CurrentBudget</span></div>
                 </div>
 
                 <div style="text-align:right;">
                     <div style="font-size:0.9rem; font-weight:500;">
-                        $150 left
+                        $@Model?.DiffBudgetToExpense left
                     </div>
                     <div style="font-size:0.8rem; color:#7a7a7a;">
-                        92% used
+                         @Math.Round(Model.BudgetUsedPercentage)% used
                     </div>
                 </div>
             </div>
@@ -58,8 +62,8 @@
     </div>
     <br />
     <div style="display:flex; gap:16px;">
-        <button type="submit" class="btn">Add a new Budget</button>
-        <button type="submit" class="btn btn-outline">Give up on Current budget</button>
+        <a asp-controller="Budget" asp-action="Create" class="btn">Add a new Budget</a>
+        <a asp-controller="Budget" asp-action="Delete" class="btn btn-outline">Give up on Current budget</a>
     </div>
 
     <div style="margin-top: 2.5rem;">
@@ -77,17 +81,24 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-
                 <tbody>
-                    <tr>
-                        <td>$120</td>
-                        <td>January</td>
-                        <td>2026</td>
-                        <td>
-                            @* <a href="#"><i class="far fa-edit action-icon"></i></a> *@
-                            <a href="#"><i class="far fa-trash-alt action-icon"></i></a>
-                        </td>
-                    </tr>
+                    @foreach (var item in Model.AllBudgets)
+                    {
+                        <tr>
+                            <td>@item.Limit_amount$</td>
+                            <td>@item.Month</td>
+                            <td>@item.Year</td>
+                            <td>
+                                <form asp-controller="Budget" asp-action="Delete" method="post" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" style="background:none; border:none; padding:0;">
+                                        <i class="far fa-trash-alt action-icon"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>

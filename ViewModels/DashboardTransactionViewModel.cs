@@ -1,4 +1,4 @@
-public class DashboardTransactionViewModel
+public class DashboardTransactionViewModel 
 {
 
     public int Id { get; set; }
