@@ -19,88 +19,95 @@
                     <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">
                         Monthly Budget Usage
                     </div>
-                    <div class="text-large">$@Model?.MonthExpenseSum <span style="font-size:1rem; color:#7a7a7a;">/ $@Model?.CurrentBudget</span></div>
+                    <div class="text-large">$@Model?.MonthExpenseSum <span style="font-size:1rem; color:#7a7a7a;">/
+                        $@Model?.CurrentBudgetLimit</span></div>
+                    </div>
+
+                    <div style="text-align:right;">
+                        <div style="font-size:0.9rem; font-weight:500;">
+                            $@Model?.DiffBudgetToExpense left
+                        </div>
+                        <div style="font-size:0.8rem; color:#7a7a7a;">
+                            @Math.Round(Model.BudgetUsedPercentage)% used
+                        </div>
+                    </div>
                 </div>
 
-                <div style="text-align:right;">
-                    <div style="font-size:0.9rem; font-weight:500;">
-                        $@Model?.DiffBudgetToExpense left
+                <!-- PROGRESS BAR -->
+                <div style="margin-top:14px; height:8px; background:#eee; border-radius:20px; overflow:hidden;">
+                    <div style="width:92%; height:8px; background:#0b0b0b; border-radius:20px;"></div>
+                </div>
+
+            </div>
+
+            <div style="display:flex; flex-direction: column; gap: 14px;">
+                <div class="card action-card" style=" background: #fffbee; border-left: 3px solid #fbc02d;">
+                    <div class="flex-between">
+                        <div>
+                            <i class="fas fa-exclamation-triangle" style="margin-right: 10px; color: #f9a825;"></i>
+                            <strong style="color: #f57f17;">Close to your month budget!!</strong>
+                            @* — Last 30 days: $1,850 vs month budget: $2,000 *@
+                        </div>
                     </div>
-                    <div style="font-size:0.8rem; color:#7a7a7a;">
-                         @Math.Round(Model.BudgetUsedPercentage)% used
+                </div>
+                <div class="card action-card" style=" background: #fdecea; border-left: 3px solid #e53935;">
+                    <div class="flex-between">
+                        <div>
+                            <i class="fas fa-exclamation-circle" style="margin-right: 10px; color: #d32f2f;"></i>
+                            <strong style="color: #b71c1c;">Budget exceeded</strong>
+                            @* — Last 30 days: $1,850 vs month budget: $1,500 *@
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <!-- PROGRESS BAR -->
-            <div style="margin-top:14px; height:8px; background:#eee; border-radius:20px; overflow:hidden;">
-                <div style="width:92%; height:8px; background:#0b0b0b; border-radius:20px;"></div>
-            </div>
-
+        </div>
+        <br />
+        <div style="display:flex; gap:16px;">
+            <a asp-controller="Budget" asp-action="Create" class="btn">Add a new Budget</a>
+            <form asp-controller="Budget" asp-action="Delete" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model?.CurrentBudgetId" />
+                <button type="submit" class="btn btn-outline">
+                    Give up on Current budget
+                </button>
+            </form>
         </div>
 
-        <div style="display:flex; flex-direction: column; gap: 14px;">
-            <div class="card action-card" style=" background: #fffbee; border-left: 3px solid #fbc02d;">
-                <div class="flex-between">
-                    <div>
-                        <i class="fas fa-exclamation-triangle" style="margin-right: 10px; color: #f9a825;"></i>
-                        <strong style="color: #f57f17;">Close to your month budget!!</strong>
-                        @* — Last 30 days: $1,850 vs month budget: $2,000 *@
-                    </div>
-                </div>
+        <div style="margin-top: 2.5rem;">
+            <div class="flex-between">
+                <h3>All active budgets <br /></h3>
             </div>
-            <div class="card action-card" style=" background: #fdecea; border-left: 3px solid #e53935;">
-                <div class="flex-between">
-                    <div>
-                        <i class="fas fa-exclamation-circle" style="margin-right: 10px; color: #d32f2f;"></i>
-                        <strong style="color: #b71c1c;">Budget exceeded</strong>
-                        @* — Last 30 days: $1,850 vs month budget: $1,500 *@
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <br />
-    <div style="display:flex; gap:16px;">
-        <a asp-controller="Budget" asp-action="Create" class="btn">Add a new Budget</a>
-        <a asp-controller="Budget" asp-action="Delete" class="btn btn-outline">Give up on Current budget</a>
-    </div>
 
-    <div style="margin-top: 2.5rem;">
-        <div class="flex-between">
-            <h3>All active budgets <br /></h3>
-        </div>
-
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Limit Amount</th>
-                        <th>Month</th>
-                        <th>Year</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.AllBudgets)
-                    {
+            <div class="table-wrapper">
+                <table>
+                    <thead>
                         <tr>
-                            <td>@item.Limit_amount$</td>
-                            <td>@item.Month</td>
-                            <td>@item.Year</td>
-                            <td>
-                                <form asp-controller="Budget" asp-action="Delete" method="post" style="display:inline;">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="id" value="@item.Id" />
-                                    <button type="submit" style="background:none; border:none; padding:0;">
-                                        <i class="far fa-trash-alt action-icon"></i>
-                                    </button>
-                                </form>
-                            </td>
+                            <th>Limit Amount</th>
+                            <th>Month</th>
+                            <th>Year</th>
+                            <th>Actions</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.AllBudgets)
+                        {
+                            <tr>
+                                <td>@item.Limit_amount$</td>
+                                <td>@item.Month</td>
+                                <td>@item.Year</td>
+                                <td>
+                                    <form asp-controller="Budget" asp-action="Delete" method="post" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" style="background:none; border:none; padding:0;">
+                                            <i class="far fa-trash-alt action-icon"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
