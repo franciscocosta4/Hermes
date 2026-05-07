@@ -41,16 +41,37 @@ public class BudgetController : Controller
             .ToList();
 
         int mesAtual = DateTime.Now.Month;
-        decimal CurrentBudget = _context.Budgets.Where(e => e.UserId == userid && e.Month == mesAtual).Select(e => e.Limit_amount).FirstOrDefault(); ;
-        decimal DiffBudgetToExpense = CurrentBudget - MonthExpenseSum;
+        var CurrentBudget = _context.Budgets
+    .Where(e => e.UserId == userid && e.Month == mesAtual)
+    .Select(e => new
+    {
+        e.Id,
+        e.Limit_amount
+    }).FirstOrDefault();
 
-        // Evita divisão por zero
-        decimal BudgetUsedPercentage = 0;
+        decimal currentBudgetLimit = 0;
+        int currentBudgetId = 0;
+        decimal diffBudgetToExpense = 0;
+        int budgetId = 0;
+        decimal budgetUsedPercentage = 0;
 
-        if (CurrentBudget > 0)
-            BudgetUsedPercentage = MonthExpenseSum / CurrentBudget * 100;
 
+        if (CurrentBudget != null)
+        {
+            currentBudgetLimit = CurrentBudget.Limit_amount;
+            currentBudgetId = CurrentBudget.Id;
+            budgetId = CurrentBudget.Id;
 
+            diffBudgetToExpense = currentBudgetLimit - MonthExpenseSum;
+
+            budgetUsedPercentage = 0;
+
+            // Evita divisão por zero
+            if (currentBudgetLimit > 0)
+            {
+                budgetUsedPercentage = MonthExpenseSum / currentBudgetLimit * 100;
+            }
+        }
 
         var model = new BudgetViewModel
         {
@@ -59,9 +80,10 @@ public class BudgetController : Controller
             Initial = user.FullName?[0].ToString().ToUpper(),
             AllBudgets = AllBudgets,
             MonthExpenseSum = MonthExpenseSum,
-            CurrentBudget = CurrentBudget,
-            DiffBudgetToExpense = DiffBudgetToExpense,
-            BudgetUsedPercentage = BudgetUsedPercentage,
+            CurrentBudgetLimit = currentBudgetLimit,
+            CurrentBudgetId =currentBudgetId,
+            DiffBudgetToExpense = diffBudgetToExpense,
+            BudgetUsedPercentage = budgetUsedPercentage,
         };
 
         return View(model);
@@ -130,6 +152,6 @@ public class BudgetController : Controller
         _context.Budgets.Remove(Budget);
         _context.SaveChanges();
 
-        return RedirectToAction("Index", "Dashboard");
+        return RedirectToAction("Index", "Budget");
     }
 }

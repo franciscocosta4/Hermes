@@ -10,7 +10,8 @@ namespace Hermes.Models
         public string? Email { get; set; }
         public string? Initial { get; set; }    
         public decimal? MonthExpenseSum { get; set; }    
-        public decimal? CurrentBudget { get; set; }    
+        public decimal? CurrentBudgetLimit { get; set; }    
+        public int? CurrentBudgetId { get; set; }    
         public decimal? DiffBudgetToExpense{ get; set; }    
         public decimal BudgetUsedPercentage{ get; set; }    
     
