@@ -14,6 +14,7 @@ namespace Hermes.Models
         public int? CurrentBudgetId { get; set; }    
         public decimal? DiffBudgetToExpense{ get; set; }    
         public decimal BudgetUsedPercentage{ get; set; }    
+        public bool? isOverspending{ get; set; }    
     
         public List<Budget>? AllBudgets { get; set; }
 
