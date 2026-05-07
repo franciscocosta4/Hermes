@@ -10,19 +10,8 @@ namespace Hermes.Controllers;
 [Authorize]
 public class BudgetController : Controller
 {
-    /// <summary>
-    /// Campo privado que armazena a instância do contexto da base de dados.
-    /// O underscore (_) antes do nome é uma convenção para indicar que é uma variável privada.
-    /// Usamos 'readonly' para garantir que não pode ser alterado após inicialização.
-    /// </summary>
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
-
-    /// <summary>
-    /// Construtor que injeta o contexto da base de dados.
-    /// O ASP.NET Core fornece automaticamente a instância do contexto.
-    /// </summary>
-    /// <param name="context">Instância do contexto da base de dados</param>
     public BudgetController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
     {
         _context = context;
@@ -33,15 +22,49 @@ public class BudgetController : Controller
     public async Task<IActionResult> Index()
     {
         var user = await _userManager.GetUserAsync(User);
+        var userid = _userManager.GetUserId(User);
 
-        var model = new DashboardViewModel //! por enquanto vai DashboardViewModel
+        var last30Days = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
+
+        // percorre as despesas e guarda as relacionadas ao user logado e registado nos últimos 30 dias
+        decimal MonthExpenseSum = _context.Expenses.Where(e => e.UserId == userid && e.Date >= last30Days).Sum(e => e.Amount);
+
+        // pegamos em todos os budgets do user para mostrar na table
+        var AllBudgets = _context.Budgets
+            .Where(e => e.UserId == userid)
+            .Select(b => new Budget
+            {
+                Limit_amount = b.Limit_amount,
+                Month = b.Month,
+                Year = b.Year
+            })
+            .ToList();
+
+        int mesAtual = DateTime.Now.Month;
+        decimal CurrentBudget = _context.Budgets.Where(e => e.UserId == userid && e.Month == mesAtual).Select(e => e.Limit_amount).FirstOrDefault(); ;
+        decimal DiffBudgetToExpense = CurrentBudget - MonthExpenseSum;
+
+        // Evita divisão por zero
+        decimal BudgetUsedPercentage = 0;
+
+        if (CurrentBudget > 0)
+            BudgetUsedPercentage = MonthExpenseSum / CurrentBudget * 100;
+
+
+
+        var model = new BudgetViewModel
         {
             FullName = user.FullName,
             Email = user.Email,
             Initial = user.FullName?[0].ToString().ToUpper(),
+            AllBudgets = AllBudgets,
+            MonthExpenseSum = MonthExpenseSum,
+            CurrentBudget = CurrentBudget,
+            DiffBudgetToExpense = DiffBudgetToExpense,
+            BudgetUsedPercentage = BudgetUsedPercentage,
         };
 
-        return View("index", model);
+        return View(model);
     }
 
     [HttpGet]
@@ -63,10 +86,24 @@ public class BudgetController : Controller
     public async Task<IActionResult> Create(CreateBudgetViewModel model)
     {
         if (!ModelState.IsValid)
+        {
             return View(model);
 
-        // pega no user autenticado
+        }
+
         var user = await _userManager.GetUserAsync(User);
+        var userid = _userManager.GetUserId(User);
+
+        var exists = _context.Budgets.Any(b => // procura por um budget naquele mês para o user logado
+            b.UserId == userid &&
+            b.Month == model.Month &&
+            b.Year == model.Year);
+
+        if (exists) // verifica se já existe um budget naquele mês para o user logado
+        {
+            ModelState.AddModelError("", "There is already a budget for this month.");
+            return View(model);
+        }
 
         var Budget = new Budget
         {
@@ -79,7 +116,7 @@ public class BudgetController : Controller
         _context.Budgets.Add(Budget);
         await _context.SaveChangesAsync();
 
-        return RedirectToAction("Index", "Dashboard");
+        return RedirectToAction("Index", "Budget");
     }
 
     public IActionResult Delete(int id)
