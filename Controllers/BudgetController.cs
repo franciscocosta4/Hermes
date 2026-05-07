@@ -34,6 +34,7 @@ public class BudgetController : Controller
             .Where(e => e.UserId == userid)
             .Select(b => new Budget
             {
+                Id = b.Id,
                 Limit_amount = b.Limit_amount,
                 Month = b.Month,
                 Year = b.Year
@@ -73,6 +74,9 @@ public class BudgetController : Controller
             }
         }
 
+        // se MonthExpenseSum for maior que budget do mes fica true
+        bool isOverspending = MonthExpenseSum > currentBudgetLimit;
+
         var model = new BudgetViewModel
         {
             FullName = user.FullName,
@@ -84,6 +88,7 @@ public class BudgetController : Controller
             CurrentBudgetId =currentBudgetId,
             DiffBudgetToExpense = diffBudgetToExpense,
             BudgetUsedPercentage = budgetUsedPercentage,
+            isOverspending = isOverspending,
         };
 
         return View(model);
