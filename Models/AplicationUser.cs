@@ -20,6 +20,8 @@ namespace Hermes.Models
 
          // Relação inversa (1 user → muitos budgets)
         public ICollection<Budget> Budgets { get; set; }  
+         // Relação inversa (1 user → muitos savings goals)
+        public ICollection<SavingsGoal> SavingsGoals { get; set; }  
 
 
     }
