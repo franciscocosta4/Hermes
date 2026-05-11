@@ -85,7 +85,7 @@ public class BudgetController : Controller
             AllBudgets = AllBudgets,
             MonthExpenseSum = MonthExpenseSum,
             CurrentBudgetLimit = currentBudgetLimit,
-            CurrentBudgetId =currentBudgetId,
+            CurrentBudgetId = currentBudgetId,
             DiffBudgetToExpense = diffBudgetToExpense,
             BudgetUsedPercentage = budgetUsedPercentage,
             isOverspending = isOverspending,

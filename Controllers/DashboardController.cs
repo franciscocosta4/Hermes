@@ -75,10 +75,43 @@ public class DashboardController : Controller
             });
         // junta os incomes e as despesas do mes em uma lista
         var MonthTransactions = MonthIncomes.Union(MonthExpenses).OrderBy(t => t.Date).ToList();
-
+        //! EXISTEM 2 TIPOS DE OVERSPENDING: GASTAR MAIS QUE A MEDIA DOS 90 DIAS (isOverspending) OU GASTAR MAIS Q O BUDGET (isBudgetOverspent)
         // se MonthExpenseSum for maior que Sum90DaysExpenses fica true
         bool isOverspending = MonthExpenseSum > averageMonthly90Days;
+        bool isBudgetOverspent = false;
 
+        int mesAtual = DateTime.Now.Month;
+        var currentBudget = _context.Budgets.Where(e => e.UserId == userid && e.Month == mesAtual).Select(e => new
+            {
+                e.Limit_amount
+            }).FirstOrDefault();
+        decimal currentBudgetLimit = 0; 
+        decimal diffBudgetToExpense = 0;
+        decimal budgetUsedPercentage = 0;
+
+        if (currentBudget != null)
+        {
+            currentBudgetLimit = currentBudget.Limit_amount;
+
+            // calcula a diferença entre o budget e as desepesas do mes 
+            diffBudgetToExpense = currentBudgetLimit - MonthExpenseSum;
+
+            // se limite exisir: 
+            if (currentBudgetLimit > 0)
+            {
+                // calcula a percentagem de budget que já foi usado
+                budgetUsedPercentage =
+                    Math.Min(
+                        (MonthExpenseSum / currentBudgetLimit) * 100,
+                        100
+                    );
+            }
+
+            if (MonthExpenseSum > currentBudgetLimit)
+            {
+                isBudgetOverspent = true;
+            }
+        }
         var model = new DashboardViewModel
         {
             FullName = user.FullName,
@@ -89,6 +122,10 @@ public class DashboardController : Controller
             MonthBalance = MonthBalance,
             averageMonthly90Days = averageMonthly90Days,
             MonthTransactions = MonthTransactions,
+            CurrentBudgetLimit = currentBudgetLimit,
+            DiffBudgetToExpense = diffBudgetToExpense,
+            BudgetUsedPercentage = budgetUsedPercentage,
+            isBudgetOverspent = isBudgetOverspent,
             Overspending = isOverspending
         };
 

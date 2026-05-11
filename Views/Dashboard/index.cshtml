@@ -1,4 +1,14 @@
 @model Hermes.Models.DashboardViewModel // vai ser preciso para carregar conteudo dinamico na dashboard vindo do
+@{
+    var expense = Model?.MonthExpenseSum ?? 0;
+    var budget = Model?.CurrentBudgetLimit ?? 0;
+    var diff = Model?.DiffBudgetToExpense ?? 0;
+    var percent = Model?.BudgetUsedPercentage ?? 0;
+
+    // limita as percentagens para a barra
+    if (percent < 0) percent = 0;
+    if (percent > 100) percent = 100;
+}
 <div class="main-content">
     <div class="flex-between mb-2">
         <h2>Overview</h2>
@@ -42,26 +52,44 @@
                 </div>
             </div>
     }
-<div class="card" style="margin-top: 24px; background: #fffbee; border-left: 3px solid #fbc02d;">
-    <div class="flex-between">
-        <div>
-            <i class="fas fa-exclamation-triangle" style="margin-right: 10px; color: #f9a825;"></i>
-            <strong style="color: #f57f17;">Close to your month budget!!</strong>
-            — Last 30 days: $@Model?.MonthExpenseSum vs month budget: $budget para o mês
+@if (budget > 0 && diff > 0 && diff < 100)
+{
+    <div class="card"
+         style="margin-top:24px; background:#fffbee; border-left:3px solid #fbc02d;">
+
+        <div class="flex-between">
+            <div>
+                <i class="fas fa-exclamation-triangle"
+                   style="margin-right:10px; color:#f9a825;"></i>
+
+                <strong style="color:#f57f17;">
+                    Close to your month budget
+                </strong>
+
+                — Last 30 days: $@expense vs month budget: $@budget
+            </div>
         </div>
-        @* <span class="badge">review</span> *@
     </div>
-</div>
-<div class="card" style="margin-top: 24px; background: #fdecea; border-left: 3px solid #e53935;">
-    <div class="flex-between">
-        <div>
-            <i class="fas fa-exclamation-circle" style="margin-right: 10px; color: #d32f2f;"></i>
-            <strong style="color: #b71c1c;">Budget exceeded</strong>
-            — Last 30 days: $@Model?.MonthExpenseSum vs month budget: $budget para o mês
+}
+@if (Model?.isBudgetOverspent == true)
+{
+    <div class="card"
+         style="margin-top:24px; background:#fdecea; border-left:3px solid #e53935;">
+
+        <div class="flex-between">
+            <div>
+                <i class="fas fa-exclamation-circle"
+                   style="margin-right:10px; color:#d32f2f;"></i>
+
+                <strong style="color:#b71c1c;">
+                    Budget exceeded
+                </strong>
+
+                — Last 30 days: $@expense vs month budget: $@budget
+            </div>
         </div>
-        @* <span class="badge">review</span> *@
     </div>
-</div>
+}
         
             <div style="margin-top: 2.5rem;">
                 <div class="flex-between">

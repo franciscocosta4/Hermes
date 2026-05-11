@@ -15,7 +15,10 @@ namespace Hermes.Models
         public decimal averageMonthly90Days { get; set; }
 
         public bool Overspending {get;set;}
-
+        public decimal? CurrentBudgetLimit { get; set; }    
+        public decimal? DiffBudgetToExpense{ get; set; }    
+        public decimal BudgetUsedPercentage{ get; set; }    
+        public bool isBudgetOverspent {get;set;}
         public List<DashboardTransactionViewModel>? MonthTransactions { get; set; }
 
     }
