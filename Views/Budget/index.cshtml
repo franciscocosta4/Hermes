@@ -76,7 +76,7 @@
         <!-- ALERTS -->
         <div style="display:flex; flex-direction: column; gap: 14px;">
 
-            @if (diff < 100 && budget > 0)
+            @if (diff < 100 && diff > 0 && budget > 0)
             {
                 <div class="card action-card" style="background:#fffef9; border-left:3px solid #fbc02d;">
                     <p style="color:#f57f17;">
