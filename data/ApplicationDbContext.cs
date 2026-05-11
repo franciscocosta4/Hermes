@@ -18,6 +18,7 @@ namespace Hermes.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<Budget> Budgets { get; set; }
+        public DbSet<SavingsGoal> SavingsGoals { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -47,6 +48,12 @@ namespace Hermes.Data
             builder.Entity<Budget>()
                 .HasOne(e => e.User)
                 .WithMany(u => u.Budgets)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            // SavingsGoal -> User
+            builder.Entity<SavingsGoal>()
+                .HasOne(e => e.User)
+                .WithMany(u => u.SavingsGoals)
                 .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
