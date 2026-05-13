@@ -1,0 +1,117 @@
+@model Hermes.Models.CreateSavingsGoalViewModel
+@{
+    Layout = "_Layout";
+}
+
+<div class="main-content" style="max-width: 640px;">
+
+    <div class="mb-2">
+        <a asp-action="Index" class="btn-outline btn-sm">
+            <i class="fas fa-arrow-left"></i> Back to goals
+        </a>
+    </div>
+
+    <div class="card" style="padding: 2rem;">
+        
+        <h2 style="margin-bottom: 0.3rem;">New Savings Goal</h2>
+        <p class="text-muted" style="margin-bottom: 2rem;">
+            Define what you're saving for and how to allocate funds automatically
+        </p>
+
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+
+            <!-- NOME DO GOAL -->
+            <div class="form-group">
+                <label asp-for="Name">Goal Name</label>
+                <input asp-for="Name" 
+                       placeholder="e.g., Emergency Fund, New Laptop, Vacation" 
+                       required />
+                <span asp-validation-for="Name" style="color:#e53935; font-size:0.8rem;"></span>
+            </div>
+
+            <!-- TARGET AMOUNT -->
+            <div class="form-group">
+                <label asp-for="Target_amount">Target Amount ($)</label>
+                <input asp-for="Target_amount" 
+                       type="number" 
+                       step="0.01" 
+                       min="0.01"
+                       placeholder="5000.00" 
+                       required />
+                <span asp-validation-for="Target_amount" style="color:#e53935; font-size:0.8rem;"></span>
+            </div>
+
+            <!-- CURRENT AMOUNT (opcional, para goals já iniciados) -->
+            <div class="form-group">
+                <label asp-for="Current_amount">Current Amount ($)</label>
+                <input asp-for="Current_amount" 
+                       type="number" 
+                       step="0.01" 
+                       min="0"
+                       placeholder="0.00" 
+                       value="0" />
+                <span asp-validation-for="Current_amount" style="color:#e53935; font-size:0.8rem;"></span>
+                <div style="font-size:0.8rem; color:#9e9e9e; margin-top:4px;">
+                    Leave at 0 if you're starting fresh
+                </div>
+            </div>
+
+            <!-- SEPARADOR VISUAL -->
+            <div style="border-top:1px solid #ececec; margin: 2rem 0;"></div>
+            <h3 style="margin-bottom: 1rem;">Automatic Allocation Rules</h3>
+            <p class="text-muted" style="margin-bottom: 1.5rem; font-size:0.9rem;">
+                Optional. Define how money is automatically directed to this goal.
+            </p>
+
+            <!-- PERCENTAGE OF INCOME -->
+            <div class="form-group">
+                <label asp-for="percentage_of_income">
+                    <i class="fas fa-percent" style="margin-right:6px;"></i> 
+                    Percentage of each income (%)
+                </label>
+                <input asp-for="percentage_of_income" 
+                       type="number" 
+                       min="1" 
+                       max="100"
+                       placeholder="e.g., 10" />
+                <span asp-validation-for="percentage_of_income" style="color:#e53935; font-size:0.8rem;"></span>
+                <div style="font-size:0.8rem; color:#9e9e9e; margin-top:4px;">
+                    Every time you record an income, this % will be added to the goal automatically
+                </div>
+            </div>
+
+            <!-- MINIMUM BALANCE TO KEEP -->
+            <div class="form-group">
+                <label asp-for="minimum_balance_to_keep">
+                    <i class="fas fa-shield-alt" style="margin-right:6px;"></i> 
+                    Minimum balance to keep ($)
+                </label>
+                <input asp-for="minimum_balance_to_keep" 
+                       type="number" 
+                       step="0.01" 
+                       min="0"
+                       placeholder="e.g., 1000" />
+                <span asp-validation-for="minimum_balance_to_keep" style="color:#e53935; font-size:0.8rem;"></span>
+                <div style="font-size:0.8rem; color:#9e9e9e; margin-top:4px;">
+                    Only savings above this balance will be allocated to the goal
+                </div>
+            </div>
+
+            <!-- BOTÕES -->
+            <div style="display:flex; gap:16px; margin-top: 2rem;">
+                <button type="submit" class="btn">
+                    <i class="fas fa-plus" style="margin-right:6px;"></i> Create Goal
+                </button>
+                <a asp-action="Dashboard" class="btn-outline">Cancel</a>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

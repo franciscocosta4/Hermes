@@ -1,0 +1,249 @@
+@model Hermes.Models.SavingsGoalViewModel
+@{
+    Layout = "_Layout";
+}
+
+@{
+    var target = Model?.CurrentTargetAmount ?? 0;
+    var saved = Model?.CurrentSavedAmount ?? 0;
+    var remaining = Model?.RemainingAmount ?? 0;
+    var percent = Model?.GoalProgressPercentage ?? 0;
+
+    if (percent < 0) percent = 0;
+    if (percent > 100) percent = 100;
+}
+
+<div class="main-content">
+
+    <div class="flex-between mb-2">
+        <h2>Savings Goals</h2>
+    </div>
+
+    <div class="grid-4">
+
+        <!-- CARD PRINCIPAL DO GOAL ATUAL -->
+        <div class="card" style="grid-column: span 3;">
+
+            <div class="flex-between">
+
+                <div>
+                    <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">
+                        @(Model?.CurrentGoalName ?? "No active goal")
+                    </div>
+
+                    <div class="text-large">
+                        $@saved.ToString("N0")
+                        <span style="font-size:1rem; color:#7a7a7a;">
+                            / $@target.ToString("N0")
+                        </span>
+                    </div>
+                </div>
+
+                <div style="text-align:right;">
+                    <div style="font-size:0.9rem; font-weight:500;">
+                        $@remaining.ToString("N0") left
+                    </div>
+
+                    <div style="font-size:0.8rem; color:#7a7a7a;">
+                        @Math.Round(percent)% saved
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Regras de alocação visíveis -->
+            @if (Model?.CurrentPercentageOfIncome != null || Model?.CurrentMinimumBalanceToKeep != null)
+            {
+                <div style="margin-top: 1rem; display: flex; gap: 1.5rem; font-size: 0.85rem; color: #5e5e5e;">
+                    @if (Model.CurrentPercentageOfIncome != null)
+                    {
+                        <div>
+                            <i class="fas fa-percent" style="margin-right: 6px;"></i>
+                            <strong>@Model.CurrentPercentageOfIncome%</strong> of each income
+                        </div>
+                    }
+                    @if (Model.CurrentMinimumBalanceToKeep != null)
+                    {
+                        <div>
+                            <i class="fas fa-shield-alt" style="margin-right: 6px;"></i>
+                            Keep <strong>$@Model.CurrentMinimumBalanceToKeep?.ToString("N0")</strong> in balance
+                        </div>
+                    }
+                </div>
+            }
+
+            <br />
+
+            <!-- PROGRESS BAR -->
+            <div style="
+                width:100%;
+                height:8px;
+                background:#e6e6e6;
+                border-radius:20px;
+                overflow:hidden;
+            ">
+                <div style="
+                    width:@percent.ToString(System.Globalization.CultureInfo.InvariantCulture)%;
+                    height:8px;
+                    background:#0b0b0b;
+                    border-radius:20px;
+                    transition: width 0.4s ease;
+                ">
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ALERTS E INFO -->
+        <div style="display:flex; flex-direction: column; gap: 14px;">
+
+            @if (Model?.IsCompleted == true)
+            {
+                <div class="card action-card" style="background:#f4faf0; border-left:3px solid #2e7d32;">
+                    <p style="color:#1b5e20;">
+                        <i class="fas fa-check-circle" style="margin-right:10px;"></i>
+                        Goal completed! 🎯
+                    </p>
+                </div>
+            }
+
+            @if (Model?.IsCloseToCompletion == true && Model?.IsCompleted != true)
+            {
+                <div class="card action-card" style="background:#fffef9; border-left:3px solid #fbc02d;">
+                    <p style="color:#f57f17;">
+                        <i class="fas fa-flag-checkered" style="margin-right:10px;"></i>
+                        Almost there! Less than 10% remaining
+                    </p>
+                </div>
+            }
+
+            @if (Model?.CurrentGoalId == null || Model?.CurrentGoalId == 0)
+            {
+                <div class="card action-card" style="background:#fafafa; border-left:3px solid #9e9e9e;">
+                    <p style="color:#424242;">
+                        <i class="fas fa-bullseye" style="margin-right:10px;"></i>
+                        Create a savings goal to start tracking
+                    </p>
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+    <br />
+
+    <!-- BOTÕES DE AÇÃO -->
+    <div style="display:flex; gap:16px;">
+
+        <a asp-controller="SavingsGoal" asp-action="Create" class="btn">
+            Add a new Savings Goal
+        </a>
+
+        @if (Model?.CurrentGoalId != null && Model.CurrentGoalId > 0)
+        {
+            <form asp-controller="SavingsGoal" asp-action="Delete" method="post" style="display:inline;">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.CurrentGoalId" />
+                <button type="submit" class="btn btn-outline">
+                    Remove current goal
+                </button>
+            </form>
+        }
+
+    </div>
+
+    <!-- TABELA COM TODOS OS GOALS -->
+    <div style="margin-top: 2.5rem;">
+
+        <h3>All savings goals</h3>
+
+        <div class="table-wrapper">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Goal Name</th>
+                        <th>Target</th>
+                        <th>Current</th>
+                        <th>Progress</th>
+                        <th>% Income</th>
+                        <th>Min Balance</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (Model?.AllGoals != null && Model.AllGoals.Any())
+                    {
+                        foreach (var item in Model.AllGoals)
+                        {
+                            var itemPercent = item.Target_amount > 0 
+                                ? Math.Round((item.Current_amount / item.Target_amount) * 100) 
+                                : 0;
+                            
+                            <tr>
+                                <td><strong>@item.Name</strong></td>
+                                <td>$@item.Target_amount.ToString("N0")</td>
+                                <td>$@item.Current_amount.ToString("N0")</td>
+                                <td>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <div style="width:60px; height:4px; background:#e6e6e6; border-radius:10px;">
+                                            <div style="width:@itemPercent%; height:4px; background:#0b0b0b; border-radius:10px;"></div>
+                                        </div>
+                                        <span style="font-size:0.8rem;">@itemPercent%</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (item.percentage_of_income != null)
+                                    {
+                                        <span>@item.percentage_of_income%</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="color:#bdbdbd;">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.minimum_balance_to_keep != null)
+                                    {
+                                        <span>$@item.minimum_balance_to_keep?.ToString("N0")</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="color:#bdbdbd;">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" title="Edit">
+                                        <i class="far fa-edit action-icon"></i>
+                                    </a>
+                                    <form asp-controller="SavingsGoal" asp-action="Delete" method="post" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" style="background:none; border:none; padding:0; cursor:pointer;">
+                                            <i class="far fa-trash-alt action-icon"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" style="text-align:center; color:#7a7a7a;">
+                                No savings goals yet
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>
