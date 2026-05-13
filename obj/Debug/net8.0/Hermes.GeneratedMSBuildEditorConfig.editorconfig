@@ -74,6 +74,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jb21lXGVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Utilizador/CODE/Hermes/Views/SavingsGoal/create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2F2aW5nc0dvYWxcY3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Utilizador/CODE/Hermes/Views/SavingsGoal/index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2F2aW5nc0dvYWxcaW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Utilizador/CODE/Hermes/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
