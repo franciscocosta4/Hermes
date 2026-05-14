@@ -9,19 +9,7 @@ namespace Hermes.Models
         public string? FullName { get; set; }
         public string? Email { get; set; }
         public string? Initial { get; set; }   
-        // Goal atual em foco (ou o primeiro ativo)
-        public int? CurrentGoalId { get; set; }
-        public string CurrentGoalName { get; set; }
-        public decimal CurrentTargetAmount { get; set; }
-        public decimal CurrentSavedAmount { get; set; }
-        public int? CurrentPercentageOfIncome { get; set; }
-        public decimal? CurrentMinimumBalanceToKeep { get; set; }
-        
-        // Percentagem atingida
-        public decimal GoalProgressPercentage { get; set; }
-        
-        // Quanto falta
-        public decimal RemainingAmount { get; set; }
+
         
         // Todos os goals do utilizador
         public List<SavingsGoal> AllGoals { get; set; } = new List<SavingsGoal>();
