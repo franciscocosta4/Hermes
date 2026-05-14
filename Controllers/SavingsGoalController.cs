@@ -19,46 +19,28 @@ public class SavingsGoalController : Controller
         _userManager = userManager;
     }
 
-    
+
     public async Task<IActionResult> Index()
     {
         var user = await _userManager.GetUserAsync(User);
         var userId = _userManager.GetUserId(User);
-        
+
         var allGoals = await _context.SavingsGoals
             .Where(g => g.UserId == userId)
             .OrderByDescending(g => g.Id)
             .ToListAsync();
-
-        var primaryGoal = allGoals.FirstOrDefault();
 
         var vm = new SavingsGoalViewModel
         {
             FullName = user.FullName,
             Email = user.Email,
             Initial = user.FullName?[0].ToString().ToUpper(),
-            CurrentGoalId = primaryGoal?.Id,
-            CurrentGoalName = primaryGoal?.Name ?? "No active goal",
-            CurrentTargetAmount = primaryGoal?.Target_amount ?? 0,
-            CurrentSavedAmount = primaryGoal?.Current_amount ?? 0,
-            CurrentPercentageOfIncome = primaryGoal?.percentage_of_income,
-            CurrentMinimumBalanceToKeep = primaryGoal?.minimum_balance_to_keep,
             AllGoals = allGoals
         };
-
-        if (primaryGoal != null && primaryGoal.Target_amount > 0)
-        {
-            vm.GoalProgressPercentage = Math.Round(
-                (primaryGoal.Current_amount / primaryGoal.Target_amount) * 100, 1);
-            vm.RemainingAmount = primaryGoal.Target_amount - primaryGoal.Current_amount;
-            vm.IsCompleted = primaryGoal.Current_amount >= primaryGoal.Target_amount;
-            vm.IsCloseToCompletion = vm.GoalProgressPercentage >= 90 && vm.GoalProgressPercentage < 100;
-        }
-
         return View(vm);
     }
 
-    
+
     [HttpGet]
     public async Task<IActionResult> Create()
     {
@@ -73,5 +55,54 @@ public class SavingsGoalController : Controller
         };
 
         return View(model);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateSavingsGoalViewModel goal)
+    {
+
+        var user = await _userManager.GetUserAsync(User);
+        var userid = _userManager.GetUserId(User);
+
+        // Contar quantos goals já tem
+        var totalGoals = await _context.SavingsGoals
+            .CountAsync(g => g.UserId == userid);
+
+        // Limite de 3
+        if (totalGoals >= 3)
+        {
+            ModelState.AddModelError("", "Só podes ter até 3.");
+            return View(goal);
+        }
+
+        var Goal = new SavingsGoal
+        {
+            Target_amount = goal.Target_amount,
+            Name= goal.Name,
+            Current_amount = goal.Current_amount,
+            percentage_of_income = goal.percentage_of_income,
+            minimum_balance_to_keep = goal.minimum_balance_to_keep,
+            UserId = user.Id
+        };
+
+        _context.SavingsGoals.Add(Goal);
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    
+    public IActionResult Delete(int id)
+    {
+        var Goal = _context.SavingsGoals.Find(id);
+
+        if (Goal == null)
+        {
+            return NotFound();
+        }
+        _context.SavingsGoals.Remove(Goal);
+        _context.SaveChanges();
+
+        return RedirectToAction("Index", "SavingsGoal");
     }
 }
