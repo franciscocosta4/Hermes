@@ -13,7 +13,7 @@ namespace Hermes.Models
         public string Name {get; set;} 
 
         // Foreign key para o utilizador (AspNetUsers)
-        public string UserId { get; set; }
+        public string? UserId { get; set; } //* importante para o system category
         // Propriedade de navegação (many-to-one)
         public ApplicationUser User { get; set; }
 

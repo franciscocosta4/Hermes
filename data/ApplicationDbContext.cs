@@ -37,6 +37,13 @@ namespace Hermes.Data
                 .HasForeignKey(c => c.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.Entity<Category>().HasData(new Category
+                {
+                    Id = 1,
+                    Name = "Savings",
+                    UserId = null 
+                }
+            );
             // Expense -> User
             builder.Entity<Expense>()
                 .HasOne(e => e.User)
