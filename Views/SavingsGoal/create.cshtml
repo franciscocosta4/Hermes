@@ -59,9 +59,9 @@
 
             <!-- SEPARADOR VISUAL -->
             <div style="border-top:1px solid #ececec; margin: 2rem 0;"></div>
-            <h3 style="margin-bottom: 1rem;">Automatic Allocation Rules</h3>
+            <h3 style="margin-bottom: 1rem;">Allocation Rules</h3>
             <p class="text-muted" style="margin-bottom: 1.5rem; font-size:0.9rem;">
-                Optional. Define how money is automatically directed to this goal.
+                Optional. Define how money is directed to this goal.
             </p>
 
             <!-- PERCENTAGE OF INCOME -->
@@ -76,7 +76,7 @@
                        max="100"
                        placeholder="e.g., 10" />
                 <span asp-validation-for="percentage_of_income" style="color:#e53935; font-size:0.8rem;"></span>
-                <div style="font-size:0.8rem; color:#9e9e9e; margin-top:4px;">
+                <div style="font-size:0.9rem; color:#797979; margin-top:4px;">
                     Every time you record an income, this % will be added to the goal automatically
                 </div>
             </div>
@@ -93,8 +93,8 @@
                        min="0"
                        placeholder="e.g., 1000" />
                 <span asp-validation-for="minimum_balance_to_keep" style="color:#e53935; font-size:0.8rem;"></span>
-                <div style="font-size:0.8rem; color:#9e9e9e; margin-top:4px;">
-                    Only savings above this balance will be allocated to the goal
+                <div style="font-size:0.9rem; color:#797979; margin-top:4px;">
+                      On creation, any excess balance above this limit will be automatically moved into this goal.
                 </div>
             </div>
 

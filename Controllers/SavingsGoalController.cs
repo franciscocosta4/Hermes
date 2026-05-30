@@ -75,10 +75,45 @@ public class SavingsGoalController : Controller
             return View(goal);
         }
 
+        // Datas limite (30 e 90 dias)
+        var last30Days = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
+        var last90Days = DateOnly.FromDateTime(DateTime.Now.AddDays(-90));
+
+        // percorre os incomes e guarda as relacionadas ao user logado e registado nos últimos 30 dias
+        decimal MonthIncomeSum = _context.Incomes.Where(e => e.UserId == userid && e.Date >= last30Days).Sum(e => e.Amount);
+
+        // percorre as despesas e guarda as relacionadas ao user logado e registado nos últimos 30 dias
+        decimal MonthExpenseSum = _context.Expenses.Where(e => e.UserId == userid && e.Date >= last30Days).Sum(e => e.Amount);
+
+        decimal MonthBalance = MonthIncomeSum - MonthExpenseSum;
+
+        if (goal.minimum_balance_to_keep > 0)
+        {
+            decimal minimum = goal.minimum_balance_to_keep ?? 0m;
+
+            decimal amountToKeep = MonthBalance - minimum;
+
+            if (amountToKeep > 0)
+            {
+                var expense = new Expense
+                {
+                    Description = $"Transferência para objetivo {goal.Name}",
+                    Amount = amountToKeep,
+                    Date = DateOnly.FromDateTime(DateTime.Now),
+                    UserId = user.Id,
+                    CategoryId = 1
+                };
+
+            goal.Current_amount += amountToKeep; // atualiza o dinheiro poupado com o dinheiro que foi tirado do balance
+
+                _context.Expenses.Add(expense);
+            }
+        }
+
         var Goal = new SavingsGoal
         {
             Target_amount = goal.Target_amount,
-            Name= goal.Name,
+            Name = goal.Name,
             Current_amount = goal.Current_amount,
             percentage_of_income = goal.percentage_of_income,
             minimum_balance_to_keep = goal.minimum_balance_to_keep,
@@ -91,7 +126,7 @@ public class SavingsGoalController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    
+
     public IActionResult Delete(int id)
     {
         var Goal = _context.SavingsGoals.Find(id);
