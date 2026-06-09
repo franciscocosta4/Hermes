@@ -75,6 +75,7 @@ public class SavingsGoalController : Controller
             return View(goal);
         }
 
+
         // Datas limite (30 e 90 dias)
         var last30Days = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
         var last90Days = DateOnly.FromDateTime(DateTime.Now.AddDays(-90));
@@ -104,10 +105,23 @@ public class SavingsGoalController : Controller
                     CategoryId = 1
                 };
 
-            goal.Current_amount += amountToKeep; // atualiza o dinheiro poupado com o dinheiro que foi tirado do balance
+                goal.Current_amount += amountToKeep; // atualiza o dinheiro poupado com o dinheiro que foi tirado do balance
 
                 _context.Expenses.Add(expense);
             }
+        }
+
+        //* procura e soma todas as percentagens que o user definiu para saber se passa de 100%
+        var totalPercentage = await _context.SavingsGoals.Where(g => g.UserId == userid).SumAsync(g => g.percentage_of_income ?? 0m);
+
+        if (totalPercentage + (goal.percentage_of_income ?? 0m) > 100)
+        {
+            ModelState.AddModelError(
+                "percentage_of_income",
+                "The total percentage allocated across all goals cannot exceed 100%."
+            );
+
+            return View(goal);
         }
 
         var Goal = new SavingsGoal

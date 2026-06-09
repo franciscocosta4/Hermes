@@ -66,11 +66,41 @@ public class IncomeController : Controller
         _context.Incomes.Add(income);
         await _context.SaveChangesAsync();
 
+        //* pega em todos os goals do user
+        var goals = _context.SavingsGoals.Where(g => g.UserId == user.Id && g.percentage_of_income > 0).ToList();
+
+        foreach (var goal in goals)
+        {
+            decimal percentage = goal.percentage_of_income ?? 0m;
+
+            decimal amountToSave = income.Amount * percentage / 100m; //* calcula a quantidade para mandar para o goal
+
+            if (amountToSave <= 0)
+                continue;
+
+            var expense = new Expense //* cria automaticamente uma "despesa" para que o dinheiro possa ser mandado para o goal
+            {
+                Description = $"Automatic allocation to {goal.Name}",
+                Amount = amountToSave,
+                Date = income.Date,
+                UserId = user.Id,
+                CategoryId = 1 // categoria Savings criada por seed
+            };
+
+            _context.Expenses.Add(expense);
+
+            goal.Current_amount += amountToSave; //* atualiza a quantidade guardada no goal
+        }
+        
+        
+        await _context.SaveChangesAsync();
+
         return RedirectToAction("Index", "Dashboard");
     }
 
     [HttpGet]
-    public async Task<IActionResult> Edit(int id){
+    public async Task<IActionResult> Edit(int id)
+    {
         var user = await _userManager.GetUserAsync(User);
         var income = _context.Incomes.Find(id);
 
