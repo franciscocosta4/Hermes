@@ -4,27 +4,22 @@ using Microsoft.AspNetCore.Authorization;
 using Hermes.Models;
 using Microsoft.AspNetCore.Identity;
 using Hermes.Data;
+using Npgsql;
 
 namespace Hermes.Controllers;
 
 [Authorize]
 public class DashboardController : Controller
 {
-    /// <summary>
-    /// Campo privado que armazena a instância do contexto da base de dados.
-    /// O underscore (_) antes do nome é uma convenção para indicar que é uma variável privada.
-    /// Usamos 'readonly' para garantir que não pode ser alterado após inicialização.
-    /// </summary>
+
+    private readonly string _connectionString;
+
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    /// <summary>
-    /// Construtor que injeta o contexto da base de dados.
-    /// O ASP.NET Core fornece automaticamente a instância do contexto.
-    /// </summary>
-    /// <param name="context">Instância do contexto da base de dados</param>
-    public DashboardController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+    public DashboardController(IConfiguration configuration, ApplicationDbContext context, UserManager<ApplicationUser> userManager)
     {
+        _connectionString = configuration.GetConnectionString("DefaultConnection")!;
         _context = context;
         _userManager = userManager;
     }
@@ -82,10 +77,10 @@ public class DashboardController : Controller
 
         int mesAtual = DateTime.Now.Month;
         var currentBudget = _context.Budgets.Where(e => e.UserId == userid && e.Month == mesAtual).Select(e => new
-            {
-                e.Limit_amount
-            }).FirstOrDefault();
-        decimal currentBudgetLimit = 0; 
+        {
+            e.Limit_amount
+        }).FirstOrDefault();
+        decimal currentBudgetLimit = 0;
         decimal diffBudgetToExpense = 0;
         decimal budgetUsedPercentage = 0;
 
@@ -131,7 +126,35 @@ public class DashboardController : Controller
 
         return View(model);
 
+    }
+    public async Task<IActionResult> GenerateCsv()
+    {
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
 
+        var userId = _userManager.GetUserId(User);
+
+        Response.ContentType = "text/csv";
+        Response.Headers.Append("Content-Disposition", "attachment; filename=teste.csv");
+
+        using var exporter = await connection.BeginTextExportAsync(
+            $"COPY (" +
+            $"SELECT 'EXPENSE' AS \"Type\", \"Description\", \"Amount\", \"Date\" FROM \"Expenses\" WHERE \"UserId\" = '{userId}' " +
+            $"UNION ALL " +
+            $"SELECT 'INCOME' AS \"Type\", NULL AS \"Description\", \"Amount\", \"Date\" FROM \"Incomes\" WHERE \"UserId\" = '{userId}' " +
+            $") TO STDOUT WITH (FORMAT CSV, HEADER TRUE)"
+        );
+
+        char[] buffer = new char[8192];
+        int read;
+
+        while ((read = await exporter.ReadAsync(buffer, 0, buffer.Length)) > 0)
+        {
+            var bytes = System.Text.Encoding.UTF8.GetBytes(buffer, 0, read);
+            await Response.Body.WriteAsync(bytes);
+        }
+
+        return new EmptyResult();
     }
 
 }
