@@ -71,7 +71,7 @@ public class SavingsGoalController : Controller
         // Limite de 3
         if (totalGoals >= 3)
         {
-            ModelState.AddModelError("", "Só podes ter até 3.");
+            ModelState.AddModelError("", "You can only have 3.");
             return View(goal);
         }
 
@@ -98,7 +98,7 @@ public class SavingsGoalController : Controller
             {
                 var expense = new Expense
                 {
-                    Description = $"Transferência para objetivo {goal.Name}",
+                    Description = $"Transfer to the goal: {goal.Name}",
                     Amount = amountToKeep,
                     Date = DateOnly.FromDateTime(DateTime.Now),
                     UserId = user.Id,
