@@ -23,6 +23,7 @@
             <h2 style="margin-bottom: 0.5rem;">Welcome back</h2>
             <p class="text-muted" style="margin-bottom: 2rem;">Sign in to your account</p>
             <form asp-action="Login" method="post">
+                 @Html.AntiForgeryToken()
                 <div class="form-group">
                     <label>Email</label>
                     <input asp-for="Email" type="email" placeholder="m@example.com" required>

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 namespace Hermes.Controllers;
 using Hermes.Models;
 
@@ -7,6 +8,7 @@ using Hermes.Models;
 /// Controlador responsável pela gestão da autenticação e autorização de utilizadores.
 /// Inclui as ações para registo, login e logout de utilizadores.
 /// </summary>
+[AutoValidateAntiforgeryToken]
 public class AccountController : Controller
 {
     // Gerenciador de utilizadores - permite criar, atualizar e eliminar utilizadores
@@ -53,6 +55,7 @@ public class AccountController : Controller
     /// <param name="model">Modelo contendo Email e Password do novo utilizador</param>
     /// <returns>Redireciona para Home/Index se sucesso, ou volta à vista com erros</returns>
     [HttpPost]
+    [EnableRateLimiting("auth")]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
         // Verifica se os dados enviados são válidos (email correto, passwords correspondidas, etc)
@@ -122,6 +125,7 @@ public class AccountController : Controller
     /// <param name="model">Modelo contendo Email, Password e RememberMe do utilizador</param>
     /// <returns>Redireciona para Home/Index se sucesso, ou volta à vista com mensagem de erro</returns>
     [HttpPost]
+    [EnableRateLimiting("auth")]
     public async Task<IActionResult> Login(LoginViewModel model)
     {
         // Verifica se os dados enviados são válidos
@@ -169,6 +173,7 @@ public class AccountController : Controller
     /// 3. Redireciona para a página inicial
     /// </summary>
     /// <returns>Redireciona para Home/Index após fazer logout</returns>
+        [HttpPost]
     public async Task<IActionResult> Logout()
     {
         // Termina a sessão atual do utilizador autenticado
