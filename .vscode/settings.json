@@ -1,0 +1,5 @@
+{
+    "appService.preDeployTask": "publish-release",
+    "appService.deploySubpath": "bin\\Release\\net8.0\\publish",
+    "appService.defaultWebAppToDeploy": "/subscriptions/6287bd79-38d2-454c-a65d-37ad993d23cf/resourceGroups/Hermes_group/providers/Microsoft.Web/sites/Hermes"
+}

@@ -6,8 +6,11 @@ using DotNetEnv;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 
-Env.Load();
 
+if (File.Exists(".env"))
+{
+    Env.Load();
+}
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHealthChecks();
@@ -30,8 +33,11 @@ builder.Services.AddRateLimiter(options =>
 });
 
 // String de ligação ao PostgreSQL
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
+var connectionString =
+    builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException(
+        "A connection string 'DefaultConnection' não está configurada.");
+        
 // Configurar DbContext com PostgreSQL
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
