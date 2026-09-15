@@ -120,3 +120,5 @@ C:\Users\Utilizador\CODE\Hermes\obj\Debug\net8.0\refint\Hermes.dll
 C:\Users\Utilizador\CODE\Hermes\obj\Debug\net8.0\Hermes.pdb
 C:\Users\Utilizador\CODE\Hermes\obj\Debug\net8.0\Hermes.genruntimeconfig.cache
 C:\Users\Utilizador\CODE\Hermes\obj\Debug\net8.0\ref\Hermes.dll
+C:\Users\Utilizador\CODE\Hermes\bin\Debug\net8.0\DotNetEnv.dll
+C:\Users\Utilizador\CODE\Hermes\bin\Debug\net8.0\Superpower.dll
