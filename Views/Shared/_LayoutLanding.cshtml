@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hermes · Landing</title>
+    <title>@(ViewData["Title"] is string title && !string.IsNullOrWhiteSpace(title) ? $"{title} · Hermes" : "Hermes · Personal finances, zero noise.")</title>
+    <meta name="description" content="@(ViewData["Description"] as string ?? "Hermes helps you track income, expenses, budgets, and savings goals with a clean black-and-white interface.")" />
+    <script>document.documentElement.classList.add('js');</script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="~/css/style.css">
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
 </head>
 <body>
     <div class="landing">
