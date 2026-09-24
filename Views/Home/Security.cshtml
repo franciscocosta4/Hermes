@@ -1,0 +1,63 @@
+@{
+    Layout = "_LayoutLanding";
+    ViewData["Title"] = "Security";
+    ViewData["Description"] = "How Hermes protects accounts and financial data, and how to report security issues.";
+}
+
+<div class="legal-content">
+    <a asp-controller="Home" asp-action="Index" class="inline-link legal-back">← Back to Hermes</a>
+
+    <h1>Security</h1>
+    <p class="text-muted">Last updated: 24 September 2026</p>
+
+    <p>
+        Hermes handles sensitive personal finance information. Security controls are intended to
+        protect account access, isolate users’ data, and reduce the risk of unauthorized access,
+        while remaining proportionate to the current size and purpose of the service.
+    </p>
+
+    <h2>Current safeguards</h2>
+    <ul>
+        <li>Authentication is required to access income, expenses, budgets, goals, and exports.</li>
+        <li>Passwords are stored using hashed password management rather than plain text.</li>
+        <li>Authentication cookies use secure, HTTP-only, and same-site protections.</li>
+        <li>Financial pages are restricted to authenticated users.</li>
+        <li>Transactions, categories, budgets, and goals are associated with individual user accounts.</li>
+        <li>Application requests use validation and anti-forgery protections where applicable.</li>
+        <li>Authentication requests are subject to rate limiting.</li>
+        <li>Production traffic is served over HTTPS with HTTP Strict Transport Security enabled.</li>
+    </ul>
+
+    <h2>Operational practices</h2>
+    <ul>
+        <li>Access to production data should be limited to authorized maintenance and support.</li>
+        <li>Backups and recovery procedures should be maintained for operational resilience.</li>
+        <li>Security updates, dependencies, and configurations should be reviewed regularly.</li>
+        <li>Suspicious authentication activity, errors, and abuse reports should be investigated.</li>
+    </ul>
+
+    <h2>Your responsibility</h2>
+    <ul>
+        <li>Use a strong, unique password for Hermes.</li>
+        <li>Do not share your credentials.</li>
+        <li>Sign out from shared or public devices.</li>
+        <li>Keep your browser and operating system updated.</li>
+        <li>Verify financial summaries before making important decisions.</li>
+    </ul>
+
+    <h2>Limitations</h2>
+    <p>
+        No online service can guarantee absolute security. Hermes does not promise protection against
+        every possible attack, software vulnerability, credential compromise, device compromise, or
+        third-party infrastructure incident. Users should avoid storing credentials or sensitive
+        information outside their secure account environment.
+    </p>
+
+    <h2>Report a security issue</h2>
+    <p>
+        Security concerns can be reported through the
+        <a class="inline-link" href="https://github.com/franciscocosta4/Hermes" target="_blank" rel="noopener">Hermes GitHub repository</a>.
+        Include a clear description, affected pages or actions, reproduction steps, and the date and
+        time of the event. Do not include passwords or other users’ personal data.
+    </p>
+</div>

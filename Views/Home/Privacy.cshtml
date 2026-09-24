@@ -1,6 +1,109 @@
-﻿@{
+@{
+    Layout = "_LayoutLanding";
     ViewData["Title"] = "Privacy Policy";
+    ViewData["Description"] = "How Hermes collects, uses, stores, protects, and deletes personal and financial data.";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="legal-content">
+    <a asp-controller="Home" asp-action="Index" class="inline-link legal-back">← Back to Hermes</a>
+
+    <h1>Privacy Policy</h1>
+    <p class="text-muted">Last updated: 24 September 2026</p>
+
+    <p>
+        This Privacy Policy explains how Hermes collects, uses, stores, protects, retains,
+        and deletes personal data. By creating an account or using Hermes, you agree to
+        the processing described below.
+    </p>
+
+    <h2>Data controller</h2>
+    <p>
+        Hermes is operated by Francisco Costa.
+    </p>
+    <p>
+        Privacy and data-protection requests can be submitted through the
+        <a class="inline-link" href="https://github.com/franciscocosta4/Hermes" target="_blank" rel="noopener">Hermes GitHub repository</a>.
+        Do not post passwords, credentials, or sensitive financial details publicly.
+    </p>
+
+    <h2>Data we collect</h2>
+    <ul>
+        <li><strong>Account data:</strong> full name, username, email address, and password credentials.</li>
+        <li><strong>Financial data:</strong> income, expenses, descriptions, amounts, dates, categories, monthly budgets, and savings goals.</li>
+        <li><strong>Security and technical data:</strong> authentication events, rate-limiting records, error logs, IP address, browser information, and device information.</li>
+    </ul>
+
+    <h2>How we use data</h2>
+    <ul>
+        <li>Create, maintain, and secure your account.</li>
+        <li>Store and display your financial records.</li>
+        <li>Calculate balances, averages, budgets, savings progress, and overspending alerts.</li>
+        <li>Provide transaction search, pagination, and CSV exports.</li>
+        <li>Prevent fraud, abuse, unauthorized access, and service disruption.</li>
+        <li>Respond to support, privacy, and security requests.</li>
+    </ul>
+
+    <h2>Legal bases</h2>
+    <ul>
+        <li><strong>Contract:</strong> processing necessary to provide your account and requested features.</li>
+        <li><strong>Legitimate interests:</strong> security, fraud prevention, service reliability, and product improvement.</li>
+        <li><strong>Legal obligation:</strong> retention or disclosure required by applicable law.</li>
+        <li><strong>Consent:</strong> where optional processing requires consent under applicable law.</li>
+    </ul>
+
+    <h2>Data sharing and processors</h2>
+    <p>
+        Hermes does not sell personal data and does not use advertising trackers.
+        Personal data may be processed by infrastructure providers necessary to operate Hermes,
+        including database, hosting, backup, and content-delivery providers.
+    </p>
+    <p>
+        Some pages may load fonts, icons, or libraries from third-party content-delivery networks.
+        Those providers may receive technical information such as your IP address, browser type,
+        and requested resource.
+    </p>
+
+    <h2>Cookies and similar technologies</h2>
+    <p>
+        Hermes uses strictly necessary cookies for authentication, session management, and security.
+        It does not currently use advertising or analytics cookies. You can control cookies through
+        your browser settings, but disabling essential cookies may prevent sign-in and access to
+        your account.
+    </p>
+
+    <h2>Data retention</h2>
+    <ul>
+        <li>Account and financial data are retained while your account remains active.</li>
+        <li>Deleted transactions are removed from the operational database.</li>
+        <li>Security logs are retained only as long as necessary for security and troubleshooting.</li>
+        <li>Backup copies may persist for a limited operational recovery period before being overwritten.</li>
+    </ul>
+
+    <h2>Your rights</h2>
+    <p>
+        Subject to applicable law, you may request access to your personal data, correction of
+        inaccurate data, export of your data, restriction of processing, objection to processing,
+        and deletion of your account and associated personal data.
+    </p>
+    <p>
+        You can export transactions to CSV from the dashboard. For broader access, correction,
+        export, or deletion requests, use the
+        <a class="inline-link" href="https://github.com/franciscocosta4/Hermes" target="_blank" rel="noopener">Hermes GitHub repository</a>.
+    </p>
+    <p>
+        Where the GDPR applies, you also have the right to lodge a complaint with a supervisory
+        authority, including the Portuguese Data Protection Authority, the CNPD.
+    </p>
+
+    <h2>Children</h2>
+    <p>
+        Hermes is not directed to children. Accounts may only be created by people who are at
+        least 16 years old or who meet the applicable minimum age in their jurisdiction.
+    </p>
+
+    <h2>Changes to this policy</h2>
+    <p>
+        This policy may be updated when Hermes features, infrastructure, or legal requirements change.
+        The revised version will be published on this page with an updated revision date.
+    </p>
+</div>

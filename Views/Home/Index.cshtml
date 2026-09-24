@@ -1,113 +1,269 @@
-﻿@{
+@{
     Layout = "_LayoutLanding";
-        <!-- HEADER -->
-        <header class="flex-between" style="padding: 24px 0;">
-            <div style="font-weight: 600; font-size: 1.8rem; letter-spacing: -0.03em;">
-                Hermes
-            </div>
-
-            <div style="display: flex; gap: 16px; align-items: center;">
-
-                @if (User.Identity != null && User.Identity.IsAuthenticated)
-                {
-                    <!-- UTILIZADOR AUTENTICADO -->
-                    <a asp-controller="Dashboard" asp-action="Index" class="btn-outline btn-sm">
-                        Dashboard
-                    </a>
-
-                    <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
-                        <button type="submit" class="btn btn-sm">
-                            Logout
-                        </button>
-                    </form>
-                }
-                else
-                {
-                    <!-- UTILIZADOR NÃO AUTENTICADO -->
-                    <a asp-controller="Account" asp-action="Login" class="btn-outline btn-sm">
-                        Sign in
-                    </a>
-                    <a asp-controller="Account" asp-action="Register" class="btn btn-sm">
-                        Get started
-                    </a>
-                }
-
-            </div>
-        </header>
-
-        <!-- HERO -->
-        <div class="hero">
-            <div style="max-width: 680px;">
-
-                <h1 style="margin-bottom: 1.2rem;">
-                    Personal finances,<br>zero noise.
-                </h1>
-
-                <p style="font-size: 1.2rem; color: #3a3a3a; margin-bottom: 2.2rem;">
-                    Track income, expenses, and overspending — clean, direct, black & white.
-                </p>
-
-                @if (User.Identity == null || !User.Identity.IsAuthenticated)
-                {
-                    <!-- BOTÕES SÓ PARA GUEST -->
-                    <div style="display: flex; gap: 16px;">
-                        <a asp-controller="Account" asp-action="Register"
-                           class="btn"
-                           style="padding: 14px 32px;">
-                            Open account →
-                        </a>
-
-                        <a asp-controller="Account" asp-action="Login"
-                           class="btn-outline"
-                           style="padding: 14px 32px;">
-                            Login
-                        </a>
-                    </div>
-                }
-                else
-                {
-                    <!-- UTILIZADOR LOGADO -->
-                    <div style="display: flex; gap: 16px;">
-                        <a asp-controller="Dashboard" asp-action="Index"
-                           class="btn"
-                           style="padding: 14px 32px;">
-                            Go to dashboard →
-                        </a>
-                    </div>
-                }
-
-            </div>
-        </div>
-
-        <!-- FEATURES -->
-        <div class="grid-4" style="margin: 3rem 0 5rem;">
-            <div class="card">
-                <i class="fas fa-chart-line" style="font-size:1.8rem; margin-bottom:1rem; opacity:0.8;"></i>
-                <h3>30-day balance</h3>
-                <p class="text-muted">Income vs expenses at a glance.</p>
-            </div>
-
-            <div class="card">
-                <i class="fas fa-chart-bar" style="font-size:1.8rem; margin-bottom:1rem; opacity:0.8;"></i>
-                <h3>90-day average</h3>
-                <p class="text-muted">Smart baseline to detect overspending.</p>
-            </div>
-
-            <div class="card">
-                <i class="fas fa-tags" style="font-size:1.8rem; margin-bottom:1rem; opacity:0.8;"></i>
-                <h3>Categories</h3>
-                <p class="text-muted">Organise every transaction.</p>
-            </div>
-
-            <div class="card">
-                <i class="fas fa-file-export" style="font-size:1.8rem; margin-bottom:1rem; opacity:0.8;"></i>
-                <h3>Export CSV</h3>
-                <p class="text-muted">Download your history.</p>
-            </div>
-        </div>
-
-    <footer style="border-top:1px solid #ececec; padding:2rem 0; text-align:center; color:#6f6f6f;">
-        Hermes · clarity over clutter
-    </footer>
-
+    ViewData["Title"] = "Personal finances, zero noise";
+    ViewData["Description"] = "Hermes helps you track income, expenses, budgets, and savings goals with a clean black-and-white interface.";
 }
+
+<!-- Header -->
+<header class="flex-between" style="padding: 24px 0;">
+    <div style="font-weight: 600; font-size: 1.8rem; letter-spacing: -0.03em;">
+        Hermes
+    </div>
+
+    <div style="display: flex; gap: 16px; align-items: center;">
+        @if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            <a asp-controller="Dashboard" asp-action="Index" class="btn-outline btn-sm">
+                Dashboard
+            </a>
+
+            <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-sm">
+                    Logout
+                </button>
+            </form>
+        }
+        else
+        {
+            <a asp-controller="Account" asp-action="Login" class="btn-outline btn-sm">
+                Sign in
+            </a>
+            <a asp-controller="Account" asp-action="Register" class="btn btn-sm">
+                Get started
+            </a>
+        }
+    </div>
+</header>
+
+<!-- Hero -->
+<div class="hero">
+    <div style="max-width: 680px;">
+        <h1 style="margin-bottom: 1.2rem;">
+            Personal finances,<br />zero noise.
+        </h1>
+
+        <p style="font-size: 1.2rem; color: #3a3a3a; margin-bottom: 2.2rem;">
+            Track income, expenses, and overspending — clean, direct, black &amp; white.
+        </p>
+
+        @if (User.Identity == null || !User.Identity.IsAuthenticated)
+        {
+            <div style="display: flex; gap: 16px;">
+                <a asp-controller="Account" asp-action="Register"
+                   class="btn"
+                   style="padding: 14px 32px;">
+                    Open account →
+                </a>
+
+                <a asp-controller="Account" asp-action="Login"
+                   class="btn-outline"
+                   style="padding: 14px 32px;">
+                    Login
+                </a>
+            </div>
+        }
+        else
+        {
+            <div style="display: flex; gap: 16px;">
+                <a asp-controller="Dashboard" asp-action="Index"
+                   class="btn"
+                   style="padding: 14px 32px;">
+                    Go to dashboard →
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Features -->
+<div class="grid-4 landing-features">
+    <div class="card">
+        <i class="fas fa-chart-line card-icon"></i>
+        <h3>30-day balance</h3>
+        <p class="text-muted">Income vs expenses at a glance.</p>
+    </div>
+
+    <div class="card">
+        <i class="fas fa-chart-bar card-icon"></i>
+        <h3>90-day average</h3>
+        <p class="text-muted">Smart baseline to detect overspending.</p>
+    </div>
+
+    <div class="card">
+        <i class="fas fa-tags card-icon"></i>
+        <h3>Categories</h3>
+        <p class="text-muted">Organise every transaction.</p>
+    </div>
+
+    <div class="card">
+        <i class="fas fa-file-export card-icon"></i>
+        <h3>Export CSV</h3>
+        <p class="text-muted">Download your history.</p>
+    </div>
+</div>
+
+<!-- How it works -->
+<section class="landing-section reveal-on-scroll" data-reveal>
+    <span class="landing-kicker">How it works</span>
+    <h2>Three steps to clearer finances.</h2>
+    <p>Hermes focuses on the essentials: record activity, organise it, and review the result.</p>
+
+    <div class="grid-3">
+        <div class="card">
+            <span class="step-number">1</span>
+            <h3>Create your account</h3>
+            <p class="text-muted">Register with your name, username, email, and password.</p>
+        </div>
+        <div class="card">
+            <span class="step-number">2</span>
+            <h3>Add income and expenses</h3>
+            <p class="text-muted">Record amounts, dates, descriptions, categories, budgets, and savings goals.</p>
+        </div>
+        <div class="card">
+            <span class="step-number">3</span>
+            <h3>Review your position</h3>
+            <p class="text-muted">Check your 30-day balance, 90-day average, budget use, and CSV export.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Your data -->
+<section class="landing-section">
+    <span class="landing-kicker">Your data</span>
+    <h2>What Hermes stores and why.</h2>
+    <p>Hermes stores the information needed to operate your account and calculate your financial summaries. It does not sell personal data or use advertising trackers.</p>
+
+    <div class="grid-3">
+        <div class="card">
+            <i class="fas fa-user card-icon"></i>
+            <h3>Account data</h3>
+            <p class="text-muted">Name, username, email, login information, and security records.</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-receipt card-icon"></i>
+            <h3>Financial data</h3>
+            <p class="text-muted">Income, expenses, categories, monthly budgets, and savings goals entered by you.</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-scale-balanced card-icon"></i>
+            <h3>Your rights</h3>
+            <p class="text-muted">You can request access, correction, export, or deletion of your personal data.</p>
+        </div>
+    </div>
+
+    <p style="margin-top: 1.8rem;">
+        Read the full
+        <a asp-controller="Home" asp-action="Privacy" class="inline-link">Privacy Policy</a>
+        and
+        <a asp-controller="Home" asp-action="Security" class="inline-link">Security overview</a>.
+    </p>
+</section>
+
+<!-- Security -->
+<section class="landing-section">
+    <span class="landing-kicker">Security</span>
+    <h2>Protected by default, without complexity.</h2>
+    <p>Financial data is only available after authentication, and users can only access their own records.</p>
+
+    <div class="grid-3">
+        <div class="card">
+            <i class="fas fa-lock card-icon"></i>
+            <h3>Authenticated access</h3>
+            <p class="text-muted">Passwords are hashed and dashboard pages require sign-in.</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-user-shield card-icon"></i>
+            <h3>Separated accounts</h3>
+            <p class="text-muted">Transactions, budgets, categories, and goals are isolated by user account.</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-shield-halved card-icon"></i>
+            <h3>Practical safeguards</h3>
+            <p class="text-muted">HTTPS, secure authentication cookies, validation, and abuse controls.</p>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="landing-section">
+    <span class="landing-kicker">FAQ</span>
+    <h2>Common questions.</h2>
+    <p>Short answers about accounts, data, exports, and support.</p>
+
+    <div class="faq-list">
+        <details class="faq-item">
+            <summary>What data does Hermes store?</summary>
+            <p>Hermes stores account details, financial records entered by you, and technical information needed for authentication and security.</p>
+        </details>
+
+        <details class="faq-item">
+            <summary>Can I download my transactions?</summary>
+            <p>Yes. Signed-in users can export their transaction history to CSV from the dashboard.</p>
+        </details>
+
+        <details class="faq-item">
+            <summary>Can I delete my transactions or account data?</summary>
+            <p>You can delete individual income and expense records inside the application. For complete account deletion, contact the maintainer through the GitHub repository without posting passwords or sensitive financial details publicly.</p>
+        </details>
+
+        <details class="faq-item">
+            <summary>Is my data shared with third parties?</summary>
+            <p>Hermes does not sell personal data. Limited technical processing may occur through database, hosting, and content-delivery providers needed to operate the service.</p>
+        </details>
+
+        <details class="faq-item">
+            <summary>Does Hermes provide financial advice?</summary>
+            <p>No. Hermes organises financial information and calculates summaries, but it does not provide financial, tax, legal, or investment advice.</p>
+        </details>
+
+        <details class="faq-item">
+            <summary>What should I do if I forget my password?</summary>
+            <p>Self-service password recovery is not currently available. Store your credentials securely and contact the maintainer through GitHub if you need assistance.</p>
+        </details>
+
+        <details class="faq-item">
+            <summary>Where can I get help?</summary>
+            <p>Use the GitHub icon below to visit the Hermes repository for documentation, issues, and assistance.</p>
+        </details>
+    </div>
+</section>
+
+<!-- Final CTA -->
+<section class="landing-section landing-cta">
+    <span class="landing-kicker">Get started</span>
+    <h2>Start with a cleaner overview today.</h2>
+    <p>Create an account and record your first income or expense.</p>
+
+    @if (User.Identity == null || !User.Identity.IsAuthenticated)
+    {
+        <div style="display: flex; gap: 16px;">
+            <a asp-controller="Account" asp-action="Register" class="btn" style="padding: 14px 32px;">
+                Open account →
+            </a>
+            <a asp-controller="Account" asp-action="Login" class="btn-outline" style="padding: 14px 32px;">
+                Login
+            </a>
+        </div>
+    }
+    else
+    {
+        <a asp-controller="Dashboard" asp-action="Index" class="btn" style="padding: 14px 32px;">
+            Go to dashboard →
+        </a>
+    }
+</section>
+
+<footer class="landing-footer">
+    <div class="footer-links">
+        <a asp-controller="Home" asp-action="Terms">Terms</a>
+        <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <a asp-controller="Home" asp-action="Security">Security</a>
+        <a href="https://github.com/franciscocosta4/Hermes" target="_blank" rel="noopener" class="github-help" aria-label="Hermes GitHub repository for help">
+            <i class="fab fa-github"></i>
+        </a>
+    </div>
+    <div class="footer-meta">
+        Hermes · clarity over clutter<br />
+        Operated by Francisco Costa · Last updated: 24 September 2026 · Version: 0.5
+    </div>
+</footer>
