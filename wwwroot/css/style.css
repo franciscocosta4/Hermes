@@ -43,7 +43,7 @@ h3 { font-size: 1.3rem; font-weight: 500; }
 }
 
 .landing .container {
-    max-width: 1260px;
+    max-width: 1360px;
     margin: 0 auto;
     padding: 0 clamp(1.25rem, 3vw, 2.5rem);
 }

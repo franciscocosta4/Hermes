@@ -36,9 +36,9 @@ public class IncomeController : Controller
 
         var model = new CreateIncomeViewModel
         {
-            FullName = user.FullName,
+            FullName = user.FullName ?? "User",
             Email = user.Email,
-            Initial = user.FullName?[0].ToString().ToUpper(),
+            Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
             Date = DateOnly.FromDateTime(DateTime.Today)
         };
 
@@ -111,9 +111,9 @@ public class IncomeController : Controller
 
         var model = new EditIncomeViewModel
         {
-            FullName = user.FullName,
+            FullName = user.FullName ?? "User",
             Email = user.Email,
-            Initial = user.FullName?[0].ToString().ToUpper(),
+            Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
             Amount = income.Amount,
             Date = income.Date,
         };

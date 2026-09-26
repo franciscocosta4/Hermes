@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body style="background:#fff;">
-    <div class="container" style="max-width: 480px; padding-top: 6rem;">
+    <div class="container" style="max-width: 480px; padding-top: 1rem; padding-bottom: 1rem;">
         <div style="margin-bottom: 2.5rem;">
             <a asp-controller="Home" asp-action="Index" style="font-weight:600; font-size:1.5rem; text-decoration:none; color:#0b0b0b;">Hermes</a>
         </div>
@@ -50,6 +50,16 @@
                 <div asp-validation-summary="All"></div>
                 <button type="submit" class="btn" style="width:100%; padding:14px;">Register →</button>
             </form>
+                            <br>
+                <form asp-controller="Account" asp-action="MicrosoftLogin" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+                    <button type="submit" class="btn"
+                            style="width:100%; background:none; border-color:#e6e6e6; padding:14px; display:flex; align-items:center; justify-content:center; gap:8px;">
+                        <img width="20px" src="~/img/microsoft.png" alt="Microsoft">
+                        <span style="color:black;">Continue with a Microsoft account</span>
+                    </button>
+                </form>
             <p style="margin-top: 1.8rem; text-align:center; font-size:0.9rem;">
                 Already have an account? <a asp-controller="Account" asp-action="Login" style="color:#0b0b0b; font-weight:500;">Sign in</a>
             </p>
