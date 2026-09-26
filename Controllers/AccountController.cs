@@ -167,8 +167,6 @@ public class AccountController : Controller
         return View(model);
     }
     [HttpPost]
-    [ValidateAntiForgeryToken]
-    [EnableRateLimiting("auth")]
     public IActionResult MicrosoftLogin(string? returnUrl = null)
     {
         // A Microsoft autentica o utilizador e devolve a aplicação
@@ -224,8 +222,10 @@ public class AccountController : Controller
 
         // Se ainda não existe uma associação entre esta conta
         // Microsoft e um utilizador local, procuramos o email.
-        var email = info.Principal.FindFirstValue(
-            ClaimTypes.Email);
+        var email = info.Principal.FindFirstValue(ClaimTypes.Email)
+            ?? info.Principal.FindFirstValue("email")
+            ?? info.Principal.FindFirstValue("preferred_username")
+            ?? info.Principal.FindFirstValue("upn");
 
         if (string.IsNullOrWhiteSpace(email))
         {

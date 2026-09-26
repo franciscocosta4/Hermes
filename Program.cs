@@ -58,13 +58,12 @@ builder.Services
     .AddAuthentication()
     .AddMicrosoftAccount(options =>
     {
-        // Obtém o Client ID a partir da configuração.
-        options.ClientId =
-            builder.Configuration["Authentication:Microsoft:ClientId"]!;
-
-        // Obtém o Client Secret a partir da configuração.
-        options.ClientSecret =
-            builder.Configuration["Authentication:Microsoft:ClientSecret"]!;
+        options.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"]
+            ?? throw new InvalidOperationException(
+                "A configuração 'Authentication:Microsoft:ClientId' não está definida.");
+        options.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"]
+            ?? throw new InvalidOperationException(
+                "A configuração 'Authentication:Microsoft:ClientSecret' não está definida.");
     });
 
 builder.Services.AddHsts(options =>
@@ -101,7 +100,7 @@ if (!app.Environment.IsDevelopment())
 app.Use(async (context, next) =>
 {
     context.Response.Headers["Content-Security-Policy"] =
-        "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self'; frame-src 'none'; worker-src 'self'; manifest-src 'self'";
+        "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self'; frame-src 'none'; worker-src 'self'; manifest-src 'self'";
     context.Response.Headers["X-Content-Type-Options"] = "nosniff";
     context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
     context.Response.Headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=(), payment=()";
