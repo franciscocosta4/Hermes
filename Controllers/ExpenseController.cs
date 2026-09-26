@@ -45,9 +45,9 @@ public class ExpenseController : Controller
         var model = new CreateExpenseViewModel
         {
             // estes dados são passados pois são precisos para a sidebar e formatação da data
-            FullName = user.FullName,
+            FullName = user.FullName ?? "User",
             Email = user.Email,
-            Initial = user.FullName?[0].ToString().ToUpper(), 
+            Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
             Date = DateOnly.FromDateTime(DateTime.Today)
         };
 
@@ -100,9 +100,9 @@ public class ExpenseController : Controller
 
         var model = new EditExpenseViewModel
         {
-            FullName = user.FullName,
+            FullName = user.FullName ?? "User",
             Email = user.Email,
-            Initial = user.FullName?[0].ToString().ToUpper(),
+            Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
             Amount = expense.Amount,
             Description = expense.Description,
             Date = expense.Date,

@@ -88,9 +88,9 @@ public class TransactionsController : Controller
 
         var model = new TransactionsViewModel
         {
-            FullName = user.FullName,
+            FullName = user.FullName ?? "User",
             Email = user.Email,
-            Initial = user.FullName?[0].ToString().ToUpper(),
+            Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
             // apenas os registos da página atual
             Transactions = transactions,
             CurrentPage = page,

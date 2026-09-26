@@ -32,9 +32,9 @@ public class SavingsGoalController : Controller
 
         var vm = new SavingsGoalViewModel
         {
-            FullName = user.FullName,
+            FullName = user.FullName ?? "User",
             Email = user.Email,
-            Initial = user.FullName?[0].ToString().ToUpper(),
+            Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
             AllGoals = allGoals
         };
         return View(vm);
@@ -48,9 +48,9 @@ public class SavingsGoalController : Controller
 
         var model = new CreateSavingsGoalViewModel
         {
-            FullName = user.FullName,
+            FullName = user.FullName ?? "User",
             Email = user.Email,
-            Initial = user.FullName?[0].ToString().ToUpper(),
+            Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
             Current_amount = 0,// o goal inicia como 0 por padrão
         };
 

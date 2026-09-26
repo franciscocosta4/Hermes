@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Hermes.Data;
 using Hermes.Models;
 using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 
@@ -52,6 +53,20 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddDefaultTokenProviders();
 
 
+// Regista a Microsoft como fornecedor de autenticação externo.
+builder.Services
+    .AddAuthentication()
+    .AddMicrosoftAccount(options =>
+    {
+        // Obtém o Client ID a partir da configuração.
+        options.ClientId =
+            builder.Configuration["Authentication:Microsoft:ClientId"]!;
+
+        // Obtém o Client Secret a partir da configuração.
+        options.ClientSecret =
+            builder.Configuration["Authentication:Microsoft:ClientSecret"]!;
+    });
+
 builder.Services.AddHsts(options =>
 {
     options.Preload = true;
@@ -68,7 +83,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/Account/Login";
     options.LogoutPath = "/Account/Logout";
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.SameSite = SameSiteMode.Lax;
     options.Cookie.HttpOnly = true;
 });
 

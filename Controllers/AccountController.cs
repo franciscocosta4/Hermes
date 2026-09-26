@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 namespace Hermes.Controllers;
+
+using System.Security.Claims;
 using Hermes.Models;
 
 /// <summary>
@@ -55,7 +57,7 @@ public class AccountController : Controller
     /// <param name="model">Modelo contendo Email e Password do novo utilizador</param>
     /// <returns>Redireciona para Home/Index se sucesso, ou volta à vista com erros</returns>
     [HttpPost]
-    [EnableRateLimiting("auth")]
+    [EnableRateLimiting("auth")]    
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
         // Verifica se os dados enviados são válidos (email correto, passwords correspondidas, etc)
@@ -162,6 +164,123 @@ public class AccountController : Controller
         // Volta a mostrar o formulário com a mensagem de erro
         return View(model);
     }
+        [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult MicrosoftLogin(string? returnUrl = null)
+    {
+        // A Microsoft autentica o utilizador e devolve a aplicação
+        // para o callback externo do Identity.
+        var redirectUrl = Url.Action(
+            nameof(MicrosoftCallback),
+            "Account",
+            new { returnUrl });
+
+        var properties = _signInManager
+            .ConfigureExternalAuthenticationProperties(
+                "Microsoft",
+                redirectUrl!);
+
+        return Challenge(properties, "Microsoft");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> MicrosoftCallback(
+        string? returnUrl = null,
+        string? remoteError = null)
+    {
+        if (!string.IsNullOrEmpty(remoteError))
+        {
+            ModelState.AddModelError(
+                string.Empty,
+                $"Erro da Microsoft: {remoteError}");
+
+            return RedirectToAction(nameof(Login));
+        }
+
+        // Obtém os dados que o middleware Google colocou
+        // temporariamente no cookie externo.
+        var info = await _signInManager.GetExternalLoginInfoAsync();
+
+        if (info == null)
+        {
+            return RedirectToAction(nameof(Login));
+        }
+
+        // Tenta autenticar um utilizador que já tenha esta
+        // conta Google associada.
+        var result = await _signInManager.ExternalLoginSignInAsync(
+            info.LoginProvider,
+            info.ProviderKey,
+            isPersistent: false,
+            bypassTwoFactor: true);
+
+        if (result.Succeeded)
+        {
+            return LocalRedirect(returnUrl ?? "/");
+        }
+
+        // Se ainda não existe uma associação entre esta conta
+        // Microsoft e um utilizador local, procuramos o email.
+        var email = info.Principal.FindFirstValue(
+            ClaimTypes.Email);
+
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return RedirectToAction(nameof(Login));
+        }
+
+        // Procura um utilizador Identity existente com esse email.
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user == null)
+        {
+            // Cria automaticamente o utilizador local.
+            user = new ApplicationUser
+            {
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true
+            };
+
+            var createResult = await _userManager.CreateAsync(user);
+
+            if (!createResult.Succeeded)
+            {
+                foreach (var error in createResult.Errors)
+                {
+                    ModelState.AddModelError(
+                        string.Empty,
+                        error.Description);
+                }
+
+                return RedirectToAction(nameof(Login));
+            }
+        }
+
+        // Associa a conta Microsoft ao utilizador Identity.
+        var addLoginResult =
+            await _userManager.AddLoginAsync(user, info);
+
+        if (!addLoginResult.Succeeded)
+        {
+            foreach (var error in addLoginResult.Errors)
+            {
+                ModelState.AddModelError(
+                    string.Empty,
+                    error.Description);
+            }
+
+            return RedirectToAction(nameof(Login));
+        }
+
+        // Cria o cookie de autenticação do Identity.
+        await _signInManager.SignInAsync(
+            user,
+            isPersistent: false);
+
+        return LocalRedirect(returnUrl ?? "/");
+    }
+    
 
     // ================= LOGOUT DE UTILIZADORES =================
 

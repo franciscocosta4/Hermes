@@ -35,9 +35,9 @@ public class CategoryController : Controller
         var model = new CreateCategoryViewModel
         {
             // estes dados são passados pois são precisos para a sidebar
-            FullName = user.FullName,
+            FullName = user.FullName ?? "User",
             Email = user.Email,
-            Initial = user.FullName?[0].ToString().ToUpper(),
+            Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
         };
 
         return View("create", model);

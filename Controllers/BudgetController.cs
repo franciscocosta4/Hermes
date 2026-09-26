@@ -79,9 +79,9 @@ public class BudgetController : Controller
 
         var model = new BudgetViewModel
         {
-            FullName = user.FullName,
+            FullName = user.FullName ?? "User",
             Email = user.Email,
-            Initial = user.FullName?[0].ToString().ToUpper(),
+            Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
             AllBudgets = AllBudgets,
             MonthExpenseSum = MonthExpenseSum,
             CurrentBudgetLimit = currentBudgetLimit,
@@ -101,9 +101,9 @@ public class BudgetController : Controller
 
         var model = new CreateBudgetViewModel
         {
-            FullName = user.FullName,
+            FullName = user.FullName ?? "User",
             Email = user.Email,
-            Initial = user.FullName?[0].ToString().ToUpper(),
+            Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
         };
 
         return View(model);

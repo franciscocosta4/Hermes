@@ -28,6 +28,7 @@ public class DashboardController : Controller
         var user = await _userManager.GetUserAsync(User);
         // não precisa de ser assincrona pois nao vai a bd, apenas pega no id do User
         var userid = _userManager.GetUserId(User);
+        
         // Datas limite (30 e 90 dias)
         var last30Days = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
         var last90Days = DateOnly.FromDateTime(DateTime.Now.AddDays(-90));
@@ -109,9 +110,9 @@ public class DashboardController : Controller
         }
         var model = new DashboardViewModel
         {
-            FullName = user.FullName,
+            FullName = user.FullName ?? "User",
             Email = user.Email,
-            Initial = user.FullName?[0].ToString().ToUpper(),
+            Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
             MonthIncomeSum = MonthIncomeSum,
             MonthExpenseSum = MonthExpenseSum,
             MonthBalance = MonthBalance,
