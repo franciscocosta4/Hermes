@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Hermes.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Hermes.Data;
 namespace Hermes.Controllers;
 
@@ -31,12 +32,16 @@ public class CategoryController : Controller
     public async Task<IActionResult> Create()
     {
         var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return Challenge();
+        }
 
         var model = new CreateCategoryViewModel
         {
             // estes dados são passados pois são precisos para a sidebar
             FullName = user.FullName ?? "User",
-            Email = user.Email,
+            Email = user.Email ?? string.Empty,
             Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
         };
 
@@ -44,6 +49,8 @@ public class CategoryController : Controller
     }
     
     [HttpPost]
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("auth")]
     public async Task<IActionResult> Create(CreateCategoryViewModel model)
     {
         // verificamos se os dados do input do CreateExpenseViewModel são válidos
@@ -52,6 +59,10 @@ public class CategoryController : Controller
 
         // pega no user autenticado
         var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return Challenge();
+        }
 
         //ao usar o model "Category" garantimos que o userId ainda pode ser registado mesmo tendo: CreateCategoryViewModel model 
         // para que o user não consiga fazer um registo com outro id, por exemplo .

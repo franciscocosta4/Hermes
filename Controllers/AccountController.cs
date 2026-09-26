@@ -57,7 +57,8 @@ public class AccountController : Controller
     /// <param name="model">Modelo contendo Email e Password do novo utilizador</param>
     /// <returns>Redireciona para Home/Index se sucesso, ou volta à vista com erros</returns>
     [HttpPost]
-    [EnableRateLimiting("auth")]    
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("auth")]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
         // Verifica se os dados enviados são válidos (email correto, passwords correspondidas, etc)
@@ -127,6 +128,7 @@ public class AccountController : Controller
     /// <param name="model">Modelo contendo Email, Password e RememberMe do utilizador</param>
     /// <returns>Redireciona para Home/Index se sucesso, ou volta à vista com mensagem de erro</returns>
     [HttpPost]
+    [ValidateAntiForgeryToken]
     [EnableRateLimiting("auth")]
     public async Task<IActionResult> Login(LoginViewModel model)
     {
@@ -149,7 +151,7 @@ public class AccountController : Controller
             return View(model);
         }
         var result = await _signInManager.PasswordSignInAsync(
-            user.UserName,//Fazer login usando o UserName (internamente obrigatório)
+            user.UserName!,//Fazer login usando o UserName (internamente obrigatório)
             model.Password,
             model.RememberMe,
             lockoutOnFailure: false);
@@ -164,8 +166,9 @@ public class AccountController : Controller
         // Volta a mostrar o formulário com a mensagem de erro
         return View(model);
     }
-        [HttpPost]
+    [HttpPost]
     [ValidateAntiForgeryToken]
+    [EnableRateLimiting("auth")]
     public IActionResult MicrosoftLogin(string? returnUrl = null)
     {
         // A Microsoft autentica o utilizador e devolve a aplicação
@@ -293,6 +296,8 @@ public class AccountController : Controller
     /// </summary>
     /// <returns>Redireciona para Home/Index após fazer logout</returns>
         [HttpPost]
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("auth")]
     public async Task<IActionResult> Logout()
     {
         // Termina a sessão atual do utilizador autenticado

@@ -4,6 +4,9 @@
     var budget = Model?.CurrentBudgetLimit ?? 0;
     var diff = Model?.DiffBudgetToExpense ?? 0;
     var percent = Model?.BudgetUsedPercentage ?? 0;
+    var average = Model?.averageMonthly90Days ?? 0;
+    var overspending = Model?.Overspending == true;
+    var transactions = Model?.MonthTransactions ?? new List<DashboardTransactionViewModel>();
 
     // limita as percentagens para a barra
     if (percent < 0) percent = 0;
@@ -13,83 +16,94 @@
     <div class="flex-between mb-2">
         <h2>Overview</h2>
         <div>
-            <a asp-controller="Expense" asp-action="Create" class="btn-outline btn-sm"><i class="fas fa-plus"></i> New</a>
-            <a asp-controller="Dashboard" asp-action="GenerateCsv" class="btn-outline btn-sm" style="margin-left:8px;"><i class="fas fa-download"></i>
-                CSV</a>
-            </div>
-        </div>
-
-        <div class="grid-4">
-            <div class="card">
-                <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">Balance (30d)</div>
-                <div class="text-large">$@Model?.MonthBalance</div>
-                @* <span style="color:#0b0b0b;">↑ 12% vs mês passado</span> *@
-            </div>
-            <div class="card">
-                <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">Income (30d)</div>
-                <div class="text-large">$@Model?.MonthIncomeSum</div>
-                @* <span class="text-muted">+ $1,200 sponsorship</span> *@
-            </div>
-            <div class="card">
-                <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">Expenses (30d)</div>
-                <div class="text-large">$@Model?.MonthExpenseSum</div>
-                @* <span class="text-muted">vs avg que deve ser calculada</span> *@
-            </div>
-            <div class="card" style="border-left: 4px solid #0b0b0b;">
-                <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">90d avg expense</div>
-                <div class="text-large">$@Model?.averageMonthly90Days</div>
-                 @if (Model.Overspending != false){
-                <span class="badge badge-light" style="margin-top:8px;">overspending alert</span>
-                }
-            </div>
-        </div>
-    @if (Model.Overspending != false){ 
-        <div class="card" style="margin-top: 24px; background: #f9f9f9;">
-            <div class="flex-between">
-                <div><i class=" fa fa-bell" style="margin-right: 10px;"></i> <strong>Overspending
-                    detected</strong> — Last 30 days: $@Model?.MonthExpenseSum vs 90d avg $@Model?.averageMonthly90Days (+alguma percentagem%)</div>
-                    @* <span class="badge">review</span> *@
+            <a asp-controller="Expense" asp-action="Create" class="btn-outline btn-sm"><i class="fas fa-plus"></i>
+                New</a>
+                <a asp-controller="Dashboard" asp-action="GenerateCsv" class="btn-outline btn-sm"
+                   style="margin-left:8px;"><i class="fas fa-download"></i>
+                    CSV</a>
                 </div>
             </div>
-    }
-@if (budget > 0 && diff > 0 && diff < 100)
-{
-    <div class="card"
-         style="margin-top:24px; background:#fffbee; border-left:3px solid #fbc02d;">
 
-        <div class="flex-between">
-            <div>
-                <i class="fas fa-exclamation-triangle"
-                   style="margin-right:10px; color:#f9a825;"></i>
-
-                <strong style="color:#f57f17;">
-                    Close to your month budget
-                </strong>
-
-                — Last 30 days: $@expense vs month budget: $@budget
+            <div class="grid-4">
+                <div class="card">
+                    <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">Balance (30d)</div>
+                    <div class="text-large">$@Model?.MonthBalance</div>
+                    @* <span style="color:#0b0b0b;">↑ 12% vs mês passado</span> *@
+                </div>
+                <div class="card">
+                    <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">Income (30d)</div>
+                    <div class="text-large">$@Model?.MonthIncomeSum</div>
+                    @* <span class="text-muted">+ $1,200 sponsorship</span> *@
+                </div>
+                <div class="card">
+                    <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">Expenses (30d)</div>
+                    <div class="text-large">$@Model?.MonthExpenseSum</div>
+                    @* <span class="text-muted">vs avg que deve ser calculada</span> *@
+                </div>
+                <div class="card" style="border-left: 4px solid #0b0b0b;">
+                    <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">90d avg expense</div>
+                    <div class="text-large">$@average</div>
+                    @if (overspending)
+                    {
+                        <span class="badge badge-light" style="margin-top:8px;">overspending alert</span>
+                    }
+                </div>
             </div>
-        </div>
-    </div>
-}
-@if (Model?.isBudgetOverspent == true)
-{
-    <div class="card"
-         style="margin-top:24px; background:#fdecea; border-left:3px solid #e53935;">
+            @if (overspending && average > 0)
+            {
+                <div class="card" style="margin-top: 24px; background: #f9f9f9;">
+                    <div class="flex-between">
+                        <div>
+                            <i class="fa fa-bell" style="margin-right: 10px;"></i>
 
-        <div class="flex-between">
-            <div>
-                <i class="fas fa-exclamation-circle"
-                   style="margin-right:10px; color:#d32f2f;"></i>
+                            <strong>Overspending detected</strong>
+                            — Last 30 days:
+                            $@Model?.MonthExpenseSum
+                            vs 90d avg
+                            $@average
 
-                <strong style="color:#b71c1c;">
-                    Budget exceeded
-                </strong>
+                            (@(
+                            (((Model?.MonthExpenseSum ?? 0) - average) / average)
+                            .ToString("P0")
+                                        ))
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (budget > 0 && diff > 0 && diff < 100)
+            {
+                <div class="card" style="margin-top:24px; background:#fffbee; border-left:3px solid #fbc02d;">
 
-                — Last 30 days: $@expense vs month budget: $@budget
-            </div>
-        </div>
-    </div>
-}
+                    <div class="flex-between">
+                        <div>
+                            <i class="fas fa-exclamation-triangle" style="margin-right:10px; color:#f9a825;"></i>
+
+                            <strong style="color:#f57f17;">
+                                Close to your month budget
+                            </strong>
+
+                            — Last 30 days: $@expense vs month budget: $@budget
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model?.isBudgetOverspent == true)
+            {
+                <div class="card" style="margin-top:24px; background:#fdecea; border-left:3px solid #e53935;">
+
+                    <div class="flex-between">
+                        <div>
+                            <i class="fas fa-exclamation-circle" style="margin-right:10px; color:#d32f2f;"></i>
+
+                            <strong style="color:#b71c1c;">
+                                Budget exceeded
+                            </strong>
+
+                            — Last 30 days: $@expense vs month budget: $@budget
+                        </div>
+                    </div>
+                </div>
+            }
         
             <div style="margin-top: 2.5rem;">
                 <div class="flex-between">
@@ -108,46 +122,48 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in Model.MonthTransactions)
+                            @foreach (var item in transactions)
                             {
                                 <tr>
                                     <td>@item.Amount$</td>
                                     <td>@item.Date</td>
                                     <td>@item.Category</td>
                                     <td>@item.Type</td>
-                                 <td>
-                                    @if (item.Category != "-"){
-                                    <a asp-controller="Expense" asp-action="Edit" asp-route-id="@item.Id">
-                                        <i class="far fa-edit action-icon"></i>
-                                    </a>
-                                    <form asp-controller="Expense"asp-action="Delete"method="post"style="display:inline;">
-                                    @Html.AntiForgeryToken()
-                                        <input type="hidden" name="id" value="@item.Id" />
-                                        <button type="submit" style="background:none; border:none; padding:0;">
-                                            <i class="far fa-trash-alt action-icon"></i>
-                                        </button>
-                                    </form>
-                                    }
-                                    else{
-                                    <a asp-controller="Income" asp-action="Edit" asp-route-id="@item.Id">
-                                        <i class="far fa-edit action-icon"></i>
-                                    </a>
-                                    <form asp-controller="Income"asp-action="Delete"method="post"style="display:inline;">
-                                    @Html.AntiForgeryToken()
-                                        <input type="hidden" name="id" value="@item.Id" />
-                                        <button type="submit" style="background:none; border:none; padding:0;">
-                                            <i class="far fa-trash-alt action-icon"></i>
-                                        </button>
-                                    </form>
-                                    }
+                                    <td>
+                                        @if (item.Category != "-")
+                                        {
+                                            <a asp-controller="Expense" asp-action="Edit" asp-route-id="@item.Id">
+                                                <i class="far fa-edit action-icon"></i>
+                                            </a>
+                                            <form asp-controller="Expense" asp-action="Delete" method="post" style="display:inline;">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@item.Id" />
+                                                <button type="submit" style="background:none; border:none; padding:0;">
+                                                    <i class="far fa-trash-alt action-icon"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <a asp-controller="Income" asp-action="Edit" asp-route-id="@item.Id">
+                                                <i class="far fa-edit action-icon"></i>
+                                            </a>
+                                            <form asp-controller="Income" asp-action="Delete" method="post" style="display:inline;">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@item.Id" />
+                                                <button type="submit" style="background:none; border:none; padding:0;">
+                                                    <i class="far fa-trash-alt action-icon"></i>
+                                                </button>
+                                            </form>
+                                        }
                                     </td>
                                 </tr>
-                                }
-                            </tbody>
-                        </table>
-                        </div>
-                        </div>
-                        @* <div style="margin-top: 2rem; display: flex; gap: 24px;">
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @* <div style="margin-top: 2rem; display: flex; gap: 24px;">
                             <div
                                 style="flex:1; height: 80px; background: #f4f4f4; border-radius: 18px; display: flex; align-items: flex-end; padding: 10px;">
                                 <div style="width: 12%; background:#0b0b0b; height: 60%; margin-right: 4px; border-radius: 40px;">
@@ -162,5 +178,5 @@
                                 <span class="text-muted" style="margin-left: 12px;">Last 5 months</span>
                             </div>
                         </div> *@
-                    </div>
-                </div>
+        </div>
+    </div>

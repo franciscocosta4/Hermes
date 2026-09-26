@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Hermes.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Hermes.Data;
 namespace Hermes.Controllers;
 
@@ -31,6 +32,10 @@ public class ExpenseController : Controller
     public async Task<IActionResult> Create()
     {
         var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return Challenge();
+        }
 
         // não precisa de ser assincrona pois nao vai a bd, apenas pega no id do User
         var userid = _userManager.GetUserId(User);
@@ -46,7 +51,7 @@ public class ExpenseController : Controller
         {
             // estes dados são passados pois são precisos para a sidebar e formatação da data
             FullName = user.FullName ?? "User",
-            Email = user.Email,
+            Email = user.Email ?? string.Empty,
             Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
             Date = DateOnly.FromDateTime(DateTime.Today)
         };
@@ -55,6 +60,8 @@ public class ExpenseController : Controller
     }
     
     [HttpPost]
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("auth")]
     public async Task<IActionResult> Create(CreateExpenseViewModel model)
     {
         // verificamos se os dados do input do CreateExpenseViewModel são válidos
@@ -64,6 +71,10 @@ public class ExpenseController : Controller
         // pega no user autenticado
         // usamos await porque a query pode demorar um pouco 
         var user = await _userManager.GetUserAsync(User); // retorna: Task<User> 
+        if (user is null)
+        {
+            return Challenge();
+        }
 
         // Criamos uma Expense porque é a entidade que representa a tabela na base de dados.
         // O CreateExpenseViewModel só serve para receber dados da view e não contém informação de domínio (como UserId).
@@ -85,6 +96,10 @@ public class ExpenseController : Controller
     [HttpGet]
     public async Task<IActionResult> Edit(int id){
         var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return Challenge();
+        }
         // não precisa de ser assincrona pois nao vai a bd, apenas pega no id do User
         var userid = _userManager.GetUserId(User);
         // aqui percorre as categorias e guarda as relacionadas ao user logado
@@ -101,7 +116,7 @@ public class ExpenseController : Controller
         var model = new EditExpenseViewModel
         {
             FullName = user.FullName ?? "User",
-            Email = user.Email,
+            Email = user.Email ?? string.Empty,
             Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
             Amount = expense.Amount,
             Description = expense.Description,
@@ -114,6 +129,8 @@ public class ExpenseController : Controller
 
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("auth")]
     public async Task<IActionResult> Edit(EditExpenseViewModel editedExpense)
     {
         // verificamos se os dados do input são válidos
@@ -122,8 +139,17 @@ public class ExpenseController : Controller
 
         // pega no user autenticado
         var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return Challenge();
+        }
 
         var existingExpense = _context.Expenses.Find(editedExpense.Id);
+        if (existingExpense is null)
+        {
+            return NotFound();
+        }
+
         if (existingExpense.UserId != user.Id)
             return Forbid();
 
@@ -140,8 +166,8 @@ public class ExpenseController : Controller
 
 
     [HttpPost]
-    [ValidateAntiForgeryToken] // Este atributo valida o token anti-CSRF (Cross-Site Request Forgery)
-                               // Garante que o pedido vem realmente do nosso site e não de um site malicioso
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("auth")]
     public IActionResult Delete(int id)
     {
         var expense = _context.Expenses.Find(id);

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Hermes.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Hermes.Data;
 using Npgsql;
 
@@ -26,6 +27,11 @@ public class DashboardController : Controller
     public async Task<IActionResult> Index()
     {
         var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return Challenge();
+        }
+
         // não precisa de ser assincrona pois nao vai a bd, apenas pega no id do User
         var userid = _userManager.GetUserId(User);
         
@@ -111,7 +117,7 @@ public class DashboardController : Controller
         var model = new DashboardViewModel
         {
             FullName = user.FullName ?? "User",
-            Email = user.Email,
+            Email = user.Email ?? string.Empty,
             Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
             MonthIncomeSum = MonthIncomeSum,
             MonthExpenseSum = MonthExpenseSum,
@@ -136,7 +142,7 @@ public class DashboardController : Controller
         var userId = _userManager.GetUserId(User);
 
         Response.ContentType = "text/csv";
-        Response.Headers.Append("Content-Disposition", "attachment; filename=teste.csv");
+        Response.Headers.Append("Content-Disposition", "attachment; filename=data.csv");
 
         using var exporter = await connection.BeginTextExportAsync(
             $"COPY (" +

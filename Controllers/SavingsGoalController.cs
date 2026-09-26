@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Hermes.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.RateLimiting;
 using Hermes.Data;
 
 namespace Hermes.Controllers;
@@ -23,6 +24,11 @@ public class SavingsGoalController : Controller
     public async Task<IActionResult> Index()
     {
         var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return Challenge();
+        }
+
         var userId = _userManager.GetUserId(User);
 
         var allGoals = await _context.SavingsGoals
@@ -33,7 +39,7 @@ public class SavingsGoalController : Controller
         var vm = new SavingsGoalViewModel
         {
             FullName = user.FullName ?? "User",
-            Email = user.Email,
+            Email = user.Email ?? string.Empty,
             Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
             AllGoals = allGoals
         };
@@ -45,11 +51,15 @@ public class SavingsGoalController : Controller
     public async Task<IActionResult> Create()
     {
         var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return Challenge();
+        }
 
         var model = new CreateSavingsGoalViewModel
         {
             FullName = user.FullName ?? "User",
-            Email = user.Email,
+            Email = user.Email ?? string.Empty,
             Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
             Current_amount = 0,// o goal inicia como 0 por padrão
         };
@@ -58,10 +68,17 @@ public class SavingsGoalController : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("auth")]
     public async Task<IActionResult> Create(CreateSavingsGoalViewModel goal)
     {
 
         var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return Challenge();
+        }
+
         var userid = _userManager.GetUserId(User);
 
         // Contar quantos goals já tem
@@ -141,6 +158,9 @@ public class SavingsGoalController : Controller
     }
 
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("auth")]
     public IActionResult Delete(int id)
     {
         var Goal = _context.SavingsGoals.Find(id);

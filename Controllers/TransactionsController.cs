@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Hermes.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Hermes.Data;
 
 namespace Hermes.Controllers;
@@ -24,6 +25,11 @@ public class TransactionsController : Controller
     public async Task<IActionResult> Index(int page = 1, int pageSize = 10, string searchinput = null)
     {
         var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return Challenge();
+        }
+
         var userid = _userManager.GetUserId(User);
         //percorre as categorias e guarda as relacionadas ao user logado
         var categories = _context.Categories.Where(c => c.UserId == userid).ToList();
@@ -89,7 +95,7 @@ public class TransactionsController : Controller
         var model = new TransactionsViewModel
         {
             FullName = user.FullName ?? "User",
-            Email = user.Email,
+            Email = user.Email ?? string.Empty,
             Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
             // apenas os registos da página atual
             Transactions = transactions,

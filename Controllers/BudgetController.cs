@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Hermes.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Hermes.Data;
 
 namespace Hermes.Controllers;
@@ -22,6 +23,11 @@ public class BudgetController : Controller
     public async Task<IActionResult> Index()
     {
         var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return Challenge();
+        }
+
         var userid = _userManager.GetUserId(User);
 
         var last30Days = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
@@ -80,7 +86,7 @@ public class BudgetController : Controller
         var model = new BudgetViewModel
         {
             FullName = user.FullName ?? "User",
-            Email = user.Email,
+            Email = user.Email ?? string.Empty,
             Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
             AllBudgets = AllBudgets,
             MonthExpenseSum = MonthExpenseSum,
@@ -98,11 +104,15 @@ public class BudgetController : Controller
     public async Task<IActionResult> Create()
     {
         var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return Challenge();
+        }
 
         var model = new CreateBudgetViewModel
         {
             FullName = user.FullName ?? "User",
-            Email = user.Email,
+            Email = user.Email ?? string.Empty,
             Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
         };
 
@@ -110,6 +120,8 @@ public class BudgetController : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("auth")]
     public async Task<IActionResult> Create(CreateBudgetViewModel model)
     {
         if (!ModelState.IsValid)
@@ -119,6 +131,11 @@ public class BudgetController : Controller
         }
 
         var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return Challenge();
+        }
+
         var userid = _userManager.GetUserId(User);
 
         var exists = _context.Budgets.Any(b => // procura por um budget naquele mês para o user logado
@@ -146,6 +163,9 @@ public class BudgetController : Controller
         return RedirectToAction("Index", "Budget");
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("auth")]
     public IActionResult Delete(int id)
     {
         var Budget = _context.Budgets.Find(id);

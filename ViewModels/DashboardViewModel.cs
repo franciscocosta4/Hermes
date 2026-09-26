@@ -19,7 +19,7 @@ namespace Hermes.Models
         public decimal? DiffBudgetToExpense{ get; set; }    
         public decimal BudgetUsedPercentage{ get; set; }    
         public bool isBudgetOverspent {get;set;}
-        public List<DashboardTransactionViewModel>? MonthTransactions { get; set; }
+        public List<DashboardTransactionViewModel> MonthTransactions { get; set; } = new();
 
     }
 }

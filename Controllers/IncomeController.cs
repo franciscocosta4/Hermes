@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Hermes.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Hermes.Data;
 
 namespace Hermes.Controllers;
@@ -33,11 +34,15 @@ public class IncomeController : Controller
     public async Task<IActionResult> Create()
     {
         var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return Challenge();
+        }
 
         var model = new CreateIncomeViewModel
         {
             FullName = user.FullName ?? "User",
-            Email = user.Email,
+            Email = user.Email ?? string.Empty,
             Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
             Date = DateOnly.FromDateTime(DateTime.Today)
         };
@@ -45,6 +50,8 @@ public class IncomeController : Controller
         return View("create", model);
     }
     [HttpPost]
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("auth")]
     public async Task<IActionResult> Create(CreateIncomeViewModel model)
     {
         // verificamos se os dados do input do CreateIncomeViewModel são válidos
@@ -53,6 +60,10 @@ public class IncomeController : Controller
 
         // pega no user autenticado
         var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return Challenge();
+        }
 
         // Criamos um Income porque é a entidade que representa a tabela incomes na base de dados.
         // O CreateIncomeViewModel só serve para receber dados da view e não contém informação de domínio (como UserId).
@@ -102,6 +113,11 @@ public class IncomeController : Controller
     public async Task<IActionResult> Edit(int id)
     {
         var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return Challenge();
+        }
+
         var income = _context.Incomes.Find(id);
 
         if (income == null)
@@ -112,7 +128,7 @@ public class IncomeController : Controller
         var model = new EditIncomeViewModel
         {
             FullName = user.FullName ?? "User",
-            Email = user.Email,
+            Email = user.Email ?? string.Empty,
             Initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName!.Trim()[..1].ToUpper() : "U",
             Amount = income.Amount,
             Date = income.Date,
@@ -122,6 +138,8 @@ public class IncomeController : Controller
 
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("auth")]
     public async Task<IActionResult> Edit(EditIncomeViewModel editedIncome)
     {
         // verificamos se os dados do input do CreateIncomeViewModel são válidos
@@ -130,8 +148,17 @@ public class IncomeController : Controller
 
         // pega no user autenticado
         var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return Challenge();
+        }
 
         var existingIncome = _context.Incomes.Find(editedIncome.Id);
+        if (existingIncome is null)
+        {
+            return NotFound();
+        }
+
         if (existingIncome.UserId != user.Id)
             return Forbid();
 
@@ -145,8 +172,8 @@ public class IncomeController : Controller
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken] // Este atributo valida o token anti-CSRF (Cross-Site Request Forgery)
-                               // Garante que o pedido vem realmente do nosso site e não de um site malicioso
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("auth")]
     public IActionResult Delete(int id)
     {
         var income = _context.Incomes.Find(id);

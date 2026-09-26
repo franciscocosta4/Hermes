@@ -27,7 +27,7 @@ builder.Services.AddRateLimiter(options =>
             httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
             _ => new FixedWindowRateLimiterOptions
             {
-                PermitLimit = 5,
+                PermitLimit = 10,
                 Window = TimeSpan.FromMinutes(1),
                 QueueLimit = 0
             }));
@@ -97,6 +97,18 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
+app.Use(async (context, next) =>
+{
+    context.Response.Headers["Content-Security-Policy"] =
+        "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self'; frame-src 'none'; worker-src 'self'; manifest-src 'self'";
+    context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+    context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+    context.Response.Headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=(), payment=()";
+    context.Response.Headers["X-Frame-Options"] = "DENY";
+
+    await next();
+});
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
