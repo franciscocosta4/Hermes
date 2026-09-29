@@ -34,7 +34,7 @@ public class DashboardController : Controller
 
         // não precisa de ser assincrona pois nao vai a bd, apenas pega no id do User
         var userid = _userManager.GetUserId(User);
-        
+
         // Datas limite (30 e 90 dias)
         var last30Days = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
         var last90Days = DateOnly.FromDateTime(DateTime.Now.AddDays(-90));
@@ -136,13 +136,25 @@ public class DashboardController : Controller
     }
     public async Task<IActionResult> GenerateCsv()
     {
+        var userId = _userManager.GetUserId(User);
+
+        // Não permite a exportação se não existir um utilizador autenticado.
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized();
+        }
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        var userId = _userManager.GetUserId(User);
+        Response.ContentType = "text/csv; charset=utf-8";
+        
+        // Define o nome real do ficheiro.
+        var fileName = $"dados_{DateTime.UtcNow:yyyyMMdd_HHmmss}.csv";
+        
+        // Indica que a resposta deve ser descarregada como ficheiro.
+        Response.Headers.ContentDisposition =
+            $"attachment; filename=\"{fileName}\"";
 
-        Response.ContentType = "text/csv";
-        Response.Headers.Append("Content-Disposition", "attachment; filename=data.csv");
 
         using var exporter = await connection.BeginTextExportAsync(
             $"COPY (" +

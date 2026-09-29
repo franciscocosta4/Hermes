@@ -168,11 +168,19 @@ public class BudgetController : Controller
     [EnableRateLimiting("auth")]
     public IActionResult Delete(int id)
     {
+        // Obtém o ID do utilizador autenticado.
+        var userId = _userManager.GetUserId(User);
+
         var Budget = _context.Budgets.Find(id);
 
         if (Budget == null)
         {
             return NotFound();
+        }
+
+        if (Budget.UserId != userId)
+        {
+            return Forbid();
         }
         _context.Budgets.Remove(Budget);
         _context.SaveChanges();

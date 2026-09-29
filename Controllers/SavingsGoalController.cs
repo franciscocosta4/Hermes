@@ -163,12 +163,19 @@ public class SavingsGoalController : Controller
     [EnableRateLimiting("auth")]
     public IActionResult Delete(int id)
     {
+        var userId = _userManager.GetUserId(User);
         var Goal = _context.SavingsGoals.Find(id);
 
         if (Goal == null)
         {
             return NotFound();
         }
+
+        if (Goal.UserId != userId)
+        {
+            return Forbid();
+        }
+        
         _context.SavingsGoals.Remove(Goal);
         _context.SaveChanges();
 
